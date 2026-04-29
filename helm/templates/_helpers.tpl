@@ -80,6 +80,7 @@ rules:
 - apiGroups:
   - quicksight.services.k8s.aws
   resources:
+  - analyses
   - datasets
   - datasources
   verbs:
@@ -93,6 +94,7 @@ rules:
 - apiGroups:
   - quicksight.services.k8s.aws
   resources:
+  - analyses/status
   - datasets/status
   - datasources/status
   verbs:

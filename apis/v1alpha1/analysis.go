@@ -20,55 +20,62 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// DataSourceSpec defines the desired state of DataSource.
+// AnalysisSpec defines the desired state of Analysis.
 //
-// The structure of a data source.
-type DataSourceSpec struct {
+// Metadata structure for an analysis in Quick Sight
+type AnalysisSpec struct {
 
-	// The Amazon Web Services account ID.
+	// The ID of the Amazon Web Services account where you are creating an analysis.
 	//
 	// Regex Pattern: `^[0-9]{12}$`
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="Value is immutable once set"
 	// +kubebuilder:validation:Required
 	AWSAccountID *string `json:"awsAccountID"`
-	// The credentials Amazon Quick Sight that uses to connect to your underlying
-	// source. Currently, only credentials based on user name and password are supported.
-	Credentials *DataSourceCredentials `json:"credentials,omitempty"`
-	// When you create the data source, Amazon Quick Sight adds the data source
-	// to these folders.
+	// When you create the analysis, Amazon Quick Sight adds the analysis to these
+	// folders.
 	FolderARNs []*string `json:"folderARNs,omitempty"`
-	// An ID for the data source. This ID is unique per Amazon Web Services Region
-	// for each Amazon Web Services account.
+	// The ID for the analysis that you're creating. This ID displays in the URL
+	// of the analysis.
+	//
+	// Regex Pattern: `^[\w\-]+$`
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="Value is immutable once set"
 	// +kubebuilder:validation:Required
 	ID *string `json:"id"`
-	// A display name for the data source.
+	// A descriptive name for the analysis that you're creating. This name displays
+	// for the analysis in the Amazon Quick Sight console.
 	// +kubebuilder:validation:Required
 	Name *string `json:"name"`
-	// The parameters that Amazon Quick Sight uses to connect to your underlying
-	// source.
-	Parameters *DataSourceParameters `json:"parameters,omitempty"`
-	// A list of resource permissions on the data source.
-	Permissions []*ResourcePermission `json:"permissions,omitempty"`
-	// Secure Socket Layer (SSL) properties that apply when Amazon Quick Sight connects
-	// to your underlying source.
-	SSLProperties *SSLProperties `json:"sslProperties,omitempty"`
-	// Contains a map of the key-value pairs for the resource tag or tags assigned
-	// to the data source.
-	Tags []*Tag `json:"tags,omitempty"`
-	// The type of the data source. To return a list of all data sources, use ListDataSources.
+	// The parameter names and override values that you want to use. An analysis
+	// can have any parameter type, and some parameters might accept multiple values.
+	Parameters *Parameters `json:"parameters,omitempty"`
+	// A structure that describes the principals and the resource-level permissions
+	// on an analysis. You can use the Permissions structure to grant permissions
+	// by providing a list of Identity and Access Management (IAM) action information
+	// for each principal listed by Amazon Resource Name (ARN).
 	//
-	// Use AMAZON_ELASTICSEARCH for Amazon OpenSearch Service.
-	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="Value is immutable once set"
-	// +kubebuilder:validation:Required
-	Type *string `json:"type,omitempty"`
-	// Use this parameter only when you want Amazon Quick Sight to use a VPC connection
-	// when connecting to your underlying source.
-	VPCConnectionProperties *VPCConnectionProperties `json:"vpcConnectionProperties,omitempty"`
+	// To specify no permissions, omit Permissions.
+	Permissions []*ResourcePermission `json:"permissions,omitempty"`
+	// A source entity to use for the analysis that you're creating. This metadata
+	// structure contains details that describe a source template and one or more
+	// datasets.
+	//
+	// Either a SourceEntity or a Definition must be provided in order for the request
+	// to be valid.
+	SourceEntity *AnalysisSourceEntity `json:"sourceEntity,omitempty"`
+	// Contains a map of the key-value pairs for the resource tag or tags assigned
+	// to the analysis.
+	Tags []*Tag `json:"tags,omitempty"`
+	// The ARN for the theme to apply to the analysis that you're creating. To see
+	// the theme in the Amazon Quick Sight console, make sure that you have access
+	// to it.
+	ThemeARN *string `json:"themeARN,omitempty"`
+	// The option to relax the validation needed to create an analysis with definition
+	// objects. This skips the validation step for specific errors.
+	ValidationStrategy *ValidationStrategy `json:"validationStrategy,omitempty"`
 }
 
-// DataSourceStatus defines the observed state of DataSource
-type DataSourceStatus struct {
+// AnalysisStatus defines the observed state of Analysis
+type AnalysisStatus struct {
 	// All CRs managed by ACK have a common `Status.ACKResourceMetadata` member
 	// that is used to contain resource sync state, account ownership,
 	// constructed ARN for the resource
@@ -80,41 +87,38 @@ type DataSourceStatus struct {
 	// resource
 	// +kubebuilder:validation:Optional
 	Conditions []*ackv1alpha1.Condition `json:"conditions"`
-	// The time that this data source was created.
+	// The time that the analysis was created.
 	// +kubebuilder:validation:Optional
 	CreatedTime *metav1.Time `json:"createdTime,omitempty"`
-	// Error information from the last update or the creation of the data source.
+	// Errors associated with the analysis.
 	// +kubebuilder:validation:Optional
-	ErrorInfo *DataSourceErrorInfo `json:"errorInfo,omitempty"`
-	// The last time that this data source was updated.
+	Errors []*AnalysisError `json:"errors,omitempty"`
+	// The time that the analysis was last updated.
 	// +kubebuilder:validation:Optional
 	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
-	// The status of the data source. Possible values are CREATION_IN_PROGRESS,
-	// CREATION_SUCCESSFUL, CREATION_FAILED, UPDATE_IN_PROGRESS, UPDATE_SUCCESSFUL,
-	// UPDATE_FAILED, or DELETED. The resource is considered synced when the status
-	// is CREATION_SUCCESSFUL or UPDATE_SUCCESSFUL.
+	// Status associated with the analysis.
 	// +kubebuilder:validation:Optional
 	Status *string `json:"status,omitempty"`
 }
 
-// DataSource is the Schema for the DataSources API
+// Analysis is the Schema for the Analyses API
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
-type DataSource struct {
+type Analysis struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Spec              DataSourceSpec   `json:"spec,omitempty"`
-	Status            DataSourceStatus `json:"status,omitempty"`
+	Spec              AnalysisSpec   `json:"spec,omitempty"`
+	Status            AnalysisStatus `json:"status,omitempty"`
 }
 
-// DataSourceList contains a list of DataSource
+// AnalysisList contains a list of Analysis
 // +kubebuilder:object:root=true
-type DataSourceList struct {
+type AnalysisList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []DataSource `json:"items"`
+	Items           []Analysis `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&DataSource{}, &DataSourceList{})
+	SchemeBuilder.Register(&Analysis{}, &AnalysisList{})
 }

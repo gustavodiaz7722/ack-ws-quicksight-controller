@@ -2,7 +2,6 @@ ignore:
   resource_names:
       - AccountCustomization
       - AccountSubscription
-      - Analysis
       - Dashboard
       - Folder
       - FolderMembership
@@ -31,6 +30,9 @@ ignore:
       - UpdateDataSetOutput.RequestId
       - DeleteDataSetOutput.RequestId
       - DescribeDataSetOutput.RequestId
+      - CreateAnalysisOutput.RequestId
+      - UpdateAnalysisOutput.RequestId
+      - DeleteAnalysisOutput.RequestId
       # HTTP status codes are not useful for users
       - CreateDataSourceOutput.Status
       - UpdateDataSourceOutput.Status
@@ -40,6 +42,10 @@ ignore:
       - UpdateDataSetOutput.Status
       - DeleteDataSetOutput.Status
       - DescribeDataSetOutput.Status
+      - CreateAnalysisOutput.Status
+      - UpdateAnalysisOutput.Status
+      - DeleteAnalysisOutput.Status
+      - DescribeAnalysisOutput.Status
       # RowLevelPermissionDataSet - deprecated
       - CreateDataSetInput.RowLevelPermissionDataSet
       - UpdateDataSetInput.RowLevelPermissionDataSet
@@ -52,12 +58,97 @@ ignore:
       - CreateDataSetInput.RowLevelPermissionTagConfiguration
       - UpdateDataSetInput.RowLevelPermissionTagConfiguration
       - DescribeDataSetOutput.RowLevelPermissionTagConfiguration
+      # Analysis Definition CRD size reduction - the Analysis CRD exceeds the
+      # Kubernetes API server limit (8.1MB) due to deeply fields. Ignoring sheets and FilterGroups reduces size below limits
+      # Remove support for inline definition and only support template definition. 
+      - CreateAnalysisInput.Definition
+      - UpdateAnalysisInput.Definition
 
 operations:
   DescribeDataSource:
     output_wrapper_field_path: DataSource
+  DescribeDataSet:
+    output_wrapper_field_path: DataSet
+  DescribeAnalysis:
+    output_wrapper_field_path: Analysis
+
+empty_shapes:
+  - AxisDisplayDataDrivenRange
+  - AllSheetsFilterScopeConfiguration
 
 resources:
+  Analysis:
+    ignore_idempotency_token: true
+    synced:
+      when:
+        - path: Status.Status
+          in:
+            - CREATION_SUCCESSFUL
+            - UPDATE_SUCCESSFUL
+    renames:
+      operations:
+        CreateAnalysis:
+          input_fields:
+            AnalysisId: ID
+          output_fields:
+            CreationStatus: Status
+        UpdateAnalysis:
+          input_fields:
+            AnalysisId: ID
+          output_fields:
+            UpdateStatus: Status
+        DeleteAnalysis:
+          input_fields:
+            AnalysisId: ID
+        DescribeAnalysis:
+          input_fields:
+            AnalysisId: ID
+    fields:
+      # Primary identifiers
+      ID:
+        is_primary_key: true
+        is_immutable: true
+      AwsAccountId:
+        is_immutable: true
+      # Status fields from DescribeAnalysis
+      Status:
+        is_read_only: true
+        from:
+          operation: DescribeAnalysis
+          path: Analysis.Status
+      CreatedTime:
+        is_read_only: true
+        from:
+          operation: DescribeAnalysis
+          path: Analysis.CreatedTime
+      LastUpdatedTime:
+        is_read_only: true
+        from:
+          operation: DescribeAnalysis
+          path: Analysis.LastUpdatedTime
+      Errors:
+        is_read_only: true
+        from:
+          operation: DescribeAnalysis
+          path: Analysis.Errors
+      Errors.Type:
+        go_tag: json:"type,omitempty"
+      SourceEntity.SourceTemplate.DataSetReferences.DataSetARN:
+        references:
+          resource: DataSet
+          path: Status.ACKResourceMetadata.ARN
+    hooks:
+      sdk_update_pre_build_request:
+        template_path: hooks/analysis/sdk_update_pre_build_request.go.tpl
+      sdk_read_one_post_set_output:
+        template_path: hooks/analysis/sdk_read_one_post_set_output.go.tpl
+    exceptions:
+      errors:
+        404:
+          code: ResourceNotFoundException
+      terminal_codes:
+        - InvalidParameterValueException
+        - UnsupportedUserEditionException
   DataSet:
     ignore_idempotency_token: true
     exceptions:
@@ -178,6 +269,7 @@ resources:
     fields:
       ID:
         is_primary_key: true
+        is_immutable: true
       AwsAccountId:
         is_immutable: true
       Type:
@@ -259,6 +351,7 @@ resources:
           code: ResourceNotFoundException
       terminal_codes:
         - InvalidParameterValueException
+        - UnsupportedUserEditionException
     hooks:
       sdk_update_pre_build_request:
         template_path: hooks/data_source/sdk_update_pre_build_request.go.tpl

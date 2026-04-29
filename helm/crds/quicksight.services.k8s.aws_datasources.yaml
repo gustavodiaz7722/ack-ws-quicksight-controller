@@ -690,6 +690,9 @@ spec:
                   An ID for the data source. This ID is unique per Amazon Web Services Region
                   for each Amazon Web Services account.
                 type: string
+                x-kubernetes-validations:
+                - message: Value is immutable once set
+                  rule: self == oldSelf
               name:
                 description: A display name for the data source.
                 type: string

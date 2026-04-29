@@ -72,11 +72,12 @@ type AccountSettings struct {
 // Contains detailed information about an action connector, including its configuration,
 // status, and enabled actions.
 type ActionConnector struct {
-	ARN              *string      `json:"arn,omitempty"`
-	CreatedTime      *metav1.Time `json:"createdTime,omitempty"`
-	LastUpdatedTime  *metav1.Time `json:"lastUpdatedTime,omitempty"`
-	Status           *string      `json:"status,omitempty"`
-	VPCConnectionARN *string      `json:"vpcConnectionARN,omitempty"`
+	ActionConnectorID *string      `json:"actionConnectorID,omitempty"`
+	ARN               *string      `json:"arn,omitempty"`
+	CreatedTime       *metav1.Time `json:"createdTime,omitempty"`
+	LastUpdatedTime   *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	Status            *string      `json:"status,omitempty"`
+	VPCConnectionARN  *string      `json:"vpcConnectionARN,omitempty"`
 }
 
 // Contains error information for an action connector that is in an error state.
@@ -92,15 +93,21 @@ type ActionConnectorSearchFilter struct {
 // Contains summary information about an action connector, used in list and
 // search operations.
 type ActionConnectorSummary struct {
-	ARN             *string      `json:"arn,omitempty"`
-	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
-	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
-	Status          *string      `json:"status,omitempty"`
+	ActionConnectorID *string      `json:"actionConnectorID,omitempty"`
+	ARN               *string      `json:"arn,omitempty"`
+	CreatedTime       *metav1.Time `json:"createdTime,omitempty"`
+	LastUpdatedTime   *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	Status            *string      `json:"status,omitempty"`
 }
 
 // The active Identity and Access Management (IAM) policy assignment.
 type ActiveIAMPolicyAssignment struct {
 	PolicyARN *string `json:"policyARN,omitempty"`
+}
+
+// An ad hoc (one-time) filtering option.
+type AdHocFilteringOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
 }
 
 // A transform operation that groups rows by specified columns and applies aggregation
@@ -129,6 +136,12 @@ type AggregationPartitionBy struct {
 	TimeGranularity *string `json:"timeGranularity,omitempty"`
 }
 
+// The configuration options to sort aggregated values.
+type AggregationSortConfiguration struct {
+	// A column of a data set.
+	Column *ColumnIdentifier `json:"column,omitempty"`
+}
+
 // The parameters for OpenSearch.
 type AmazonElasticsearchParameters struct {
 	Domain *string `json:"domain,omitempty"`
@@ -139,13 +152,11 @@ type AmazonOpenSearchParameters struct {
 	Domain *string `json:"domain,omitempty"`
 }
 
-// Metadata structure for an analysis in Quick Sight
-type Analysis struct {
-	ARN             *string      `json:"arn,omitempty"`
-	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
-	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
-	Status          *string      `json:"status,omitempty"`
-	ThemeARN        *string      `json:"themeARN,omitempty"`
+// Analysis error.
+type AnalysisError struct {
+	Message          *string   `json:"message,omitempty"`
+	Type             *string   `json:"type,omitempty"`
+	ViolatedEntities []*Entity `json:"violatedEntities,omitempty"`
 }
 
 // A filter that you apply when searching for one or more analyses.
@@ -153,22 +164,55 @@ type AnalysisSearchFilter struct {
 	Value *string `json:"value,omitempty"`
 }
 
+// The source entity of an analysis.
+type AnalysisSourceEntity struct {
+	// The source template of an analysis.
+	SourceTemplate *AnalysisSourceTemplate `json:"sourceTemplate,omitempty"`
+}
+
 // The source template of an analysis.
 type AnalysisSourceTemplate struct {
-	ARN *string `json:"arn,omitempty"`
+	ARN               *string             `json:"arn,omitempty"`
+	DataSetReferences []*DataSetReference `json:"dataSetReferences,omitempty"`
 }
 
 // The summary metadata that describes an analysis.
 type AnalysisSummary struct {
+	AnalysisID      *string      `json:"analysisID,omitempty"`
 	ARN             *string      `json:"arn,omitempty"`
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
 	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	Name            *string      `json:"name,omitempty"`
 	Status          *string      `json:"status,omitempty"`
+}
+
+// Metadata structure for an analysis in Quick Sight
+type Analysis_SDK struct {
+	AnalysisID      *string          `json:"analysisID,omitempty"`
+	ARN             *string          `json:"arn,omitempty"`
+	CreatedTime     *metav1.Time     `json:"createdTime,omitempty"`
+	DataSetARNs     []*string        `json:"dataSetARNs,omitempty"`
+	Errors          []*AnalysisError `json:"errors,omitempty"`
+	LastUpdatedTime *metav1.Time     `json:"lastUpdatedTime,omitempty"`
+	Name            *string          `json:"name,omitempty"`
+	Sheets          []*Sheet         `json:"sheets,omitempty"`
+	Status          *string          `json:"status,omitempty"`
+	ThemeARN        *string          `json:"themeARN,omitempty"`
 }
 
 // The definition of the Anchor.
 type Anchor struct {
 	TimeGranularity *string `json:"timeGranularity,omitempty"`
+}
+
+// The date configuration of the filter.
+type AnchorDateConfiguration struct {
+	ParameterName *string `json:"parameterName,omitempty"`
+}
+
+// Information about the dashboard that you want to embed.
+type AnonymousUserDashboardEmbeddingConfiguration struct {
+	InitialDashboardID *string `json:"initialDashboardID,omitempty"`
 }
 
 // A transform operation that combines rows from two data sources by stacking
@@ -217,7 +261,9 @@ type AssetBundleExportJobDataSourceOverrideProperties struct {
 
 // Describes an error that occurred during an Asset Bundle export job.
 type AssetBundleExportJobError struct {
-	ARN *string `json:"arn,omitempty"`
+	ARN     *string `json:"arn,omitempty"`
+	Message *string `json:"message,omitempty"`
+	Type    *string `json:"type_,omitempty"`
 }
 
 // Controls how a specific Folder resource is parameterized in the returned
@@ -242,6 +288,7 @@ type AssetBundleExportJobResourceIDOverrideConfiguration struct {
 // and its current status.
 type AssetBundleExportJobSummary struct {
 	ARN                    *string      `json:"arn,omitempty"`
+	AssetBundleExportJobID *string      `json:"assetBundleExportJobID,omitempty"`
 	CreatedTime            *metav1.Time `json:"createdTime,omitempty"`
 	IncludeAllDependencies *bool        `json:"includeAllDependencies,omitempty"`
 	IncludePermissions     *bool        `json:"includePermissions,omitempty"`
@@ -269,7 +316,8 @@ type AssetBundleExportJobValidationStrategy struct {
 
 // Describes a warning that occurred during an Asset Bundle export job.
 type AssetBundleExportJobWarning struct {
-	ARN *string `json:"arn,omitempty"`
+	ARN     *string `json:"arn,omitempty"`
+	Message *string `json:"message,omitempty"`
 }
 
 // The override parameters for a single analysis that is being imported.
@@ -342,7 +390,9 @@ type AssetBundleImportJobDataSourceOverrideTags struct {
 
 // Describes an error that occurred within an Asset Bundle import execution.
 type AssetBundleImportJobError struct {
-	ARN *string `json:"arn,omitempty"`
+	ARN     *string `json:"arn,omitempty"`
+	Message *string `json:"message,omitempty"`
+	Type    *string `json:"type_,omitempty"`
 }
 
 // The override parameters for a single folder that is being imported.
@@ -381,8 +431,9 @@ type AssetBundleImportJobResourceIDOverrideConfiguration struct {
 // A summary of the import job that includes details of the requested job's
 // configuration and its current status.
 type AssetBundleImportJobSummary struct {
-	ARN         *string      `json:"arn,omitempty"`
-	CreatedTime *metav1.Time `json:"createdTime,omitempty"`
+	ARN                    *string      `json:"arn,omitempty"`
+	AssetBundleImportJobID *string      `json:"assetBundleImportJobID,omitempty"`
+	CreatedTime            *metav1.Time `json:"createdTime,omitempty"`
 }
 
 // The override parameters for a single theme that is imported.
@@ -411,7 +462,8 @@ type AssetBundleImportJobVPCConnectionOverrideTags struct {
 
 // Describes a warning that occurred during an Asset Bundle import job.
 type AssetBundleImportJobWarning struct {
-	ARN *string `json:"arn,omitempty"`
+	ARN     *string `json:"arn,omitempty"`
+	Message *string `json:"message,omitempty"`
 }
 
 // A structure that contains the permissions for the resource that you want
@@ -422,7 +474,8 @@ type AssetBundleResourcePermissions struct {
 
 // An array of analysis level configurations.
 type AssetOptions struct {
-	Timezone *string `json:"timezone,omitempty"`
+	ExcludedDataSetARNs []*string `json:"excludedDataSetARNs,omitempty"`
+	Timezone            *string   `json:"timezone,omitempty"`
 }
 
 // Parameters for Amazon Athena.
@@ -454,10 +507,47 @@ type AuroraPostgreSQLParameters struct {
 	Port     *int64  `json:"port,omitempty"`
 }
 
+// The display options for the axis label.
+type AxisDisplayOptions struct {
+	AxisLineVisibility *string `json:"axisLineVisibility,omitempty"`
+	GridLineVisibility *string `json:"gridLineVisibility,omitempty"`
+}
+
 // The label options for a chart axis. You must specify the field that the label
 // is targeted to.
 type AxisLabelOptions struct {
 	CustomLabel *string `json:"customLabel,omitempty"`
+}
+
+// The reference that specifies where the axis label is applied to.
+type AxisLabelReferenceOptions struct {
+	// A column of a data set.
+	Column  *ColumnIdentifier `json:"column,omitempty"`
+	FieldID *string           `json:"fieldID,omitempty"`
+}
+
+// A bar chart.
+//
+// The BarChartVisual structure describes a visual that is a member of the bar
+// chart family. The following charts can be described using this structure:
+//
+//   - Horizontal bar chart
+//
+//   - Vertical bar chart
+//
+//   - Horizontal stacked bar chart
+//
+//   - Vertical stacked bar chart
+//
+//   - Horizontal stacked 100% bar chart
+//
+//   - Vertical stacked 100% bar chart
+//
+// For more information, see Using bar charts (https://docs.aws.amazon.com/quicksight/latest/user/bar-charts.html)
+// in the Amazon Quick Suite User Guide.
+type BarChartVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
 }
 
 // The parameters that are required to connect to a Google BigQuery data source.
@@ -466,9 +556,34 @@ type BigQueryParameters struct {
 	ProjectID     *string `json:"projectID,omitempty"`
 }
 
+// The configuration of a body section.
+type BodySectionConfiguration struct {
+	SectionID *string `json:"sectionID,omitempty"`
+}
+
+// Describes the Category dataset column and constraints for the dynamic values
+// used to repeat the contents of a section.
+type BodySectionDynamicCategoryDimensionConfiguration struct {
+	// A column of a data set.
+	Column *ColumnIdentifier `json:"column,omitempty"`
+}
+
+// Describes the Numeric dataset column and constraints for the dynamic values
+// used to repeat the contents of a section.
+type BodySectionDynamicNumericDimensionConfiguration struct {
+	// A column of a data set.
+	Column *ColumnIdentifier `json:"column,omitempty"`
+}
+
 // The bookmarks configuration of an embedded dashboard.
 type BookmarksConfigurations struct {
 	Enabled *bool `json:"enabled,omitempty"`
+}
+
+// Border settings configuration for visual elements, including visibility,
+// width, and color properties.
+type BorderSettings struct {
+	BorderVisibility *string `json:"borderVisibility,omitempty"`
 }
 
 // The display options for tile borders for visuals.
@@ -476,16 +591,34 @@ type BorderStyle struct {
 	Show *bool `json:"show,omitempty"`
 }
 
+// The options of a box plot visual.
+type BoxPlotOptions struct {
+	AllDataPointsVisibility *string `json:"allDataPointsVisibility,omitempty"`
+	OutlierVisibility       *string `json:"outlierVisibility,omitempty"`
+}
+
+// A box plot.
+//
+// For more information, see Using box plots (https://docs.aws.amazon.com/quicksight/latest/user/box-plots.html)
+// in the Amazon Quick Suite User Guide.
+type BoxPlotVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
 // The details of the brand.
 type BrandDetail struct {
 	ARN             *string      `json:"arn,omitempty"`
+	BrandID         *string      `json:"brandID,omitempty"`
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
 	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	VersionID       *string      `json:"versionID,omitempty"`
 }
 
 // A summary of the brand.
 type BrandSummary struct {
 	ARN             *string      `json:"arn,omitempty"`
+	BrandID         *string      `json:"brandID,omitempty"`
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
 	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
 }
@@ -499,17 +632,21 @@ type CalculatedColumn struct {
 
 // The calculated field of an analysis.
 type CalculatedField struct {
-	Name *string `json:"name,omitempty"`
+	DataSetIdentifier *string `json:"dataSetIdentifier,omitempty"`
+	Name              *string `json:"name,omitempty"`
 }
 
 // The table calculation measure field for pivot tables.
 type CalculatedMeasureField struct {
 	Expression *string `json:"expression,omitempty"`
+	FieldID    *string `json:"fieldID,omitempty"`
 }
 
 // The source controls that are used in a CascadingControlConfiguration.
 type CascadingControlSource struct {
-	SourceSheetControlID *string `json:"sourceSheetControlID,omitempty"`
+	// A column of a data set.
+	ColumnToMatch        *ColumnIdentifier `json:"columnToMatch,omitempty"`
+	SourceSheetControlID *string           `json:"sourceSheetControlID,omitempty"`
 }
 
 // A transform operation that casts a column to a different type.
@@ -528,6 +665,54 @@ type CastColumnTypesOperation struct {
 	// Specifies the source of data for a transform operation, including the source
 	// operation and column mappings.
 	Source *TransformOperationSource `json:"source,omitempty"`
+}
+
+// The dimension type field with categorical type columns..
+type CategoricalDimensionField struct {
+	// A column of a data set.
+	Column  *ColumnIdentifier `json:"column,omitempty"`
+	FieldID *string           `json:"fieldID,omitempty"`
+}
+
+// The measure type field with categorical type columns.
+type CategoricalMeasureField struct {
+	// A column of a data set.
+	Column  *ColumnIdentifier `json:"column,omitempty"`
+	FieldID *string           `json:"fieldID,omitempty"`
+}
+
+// The category drill down filter.
+type CategoryDrillDownFilter struct {
+	// A column of a data set.
+	Column *ColumnIdentifier `json:"column,omitempty"`
+}
+
+// A CategoryFilter filters text values.
+//
+// For more information, see Adding text filters (https://docs.aws.amazon.com/quicksight/latest/user/add-a-text-filter-data-prep.html)
+// in the Amazon Quick Suite User Guide.
+type CategoryFilter struct {
+	// A column of a data set.
+	Column   *ColumnIdentifier `json:"column,omitempty"`
+	FilterID *string           `json:"filterID,omitempty"`
+}
+
+// A CategoryInnerFilter filters text values for the NestedFilter.
+type CategoryInnerFilter struct {
+	// A column of a data set.
+	Column *ColumnIdentifier `json:"column,omitempty"`
+}
+
+// The label options for an axis on a chart.
+type ChartAxisLabelOptions struct {
+	SortIconVisibility *string `json:"sortIconVisibility,omitempty"`
+	Visibility         *string `json:"visibility,omitempty"`
+}
+
+// The general configuration of a column.
+type ColumnConfiguration struct {
+	// A column of a data set.
+	Column *ColumnIdentifier `json:"column,omitempty"`
 }
 
 // Metadata that contains a description for a column.
@@ -555,7 +740,8 @@ type ColumnGroupSchema struct {
 
 // A column of a data set.
 type ColumnIdentifier struct {
-	ColumnName *string `json:"columnName,omitempty"`
+	ColumnName        *string `json:"columnName,omitempty"`
+	DataSetIdentifier *string `json:"dataSetIdentifier,omitempty"`
 }
 
 // A rule defined to grant access on one or more restricted columns. Each dataset
@@ -573,6 +759,12 @@ type ColumnSchema struct {
 	DataType       *string `json:"dataType,omitempty"`
 	GeographicRole *string `json:"geographicRole,omitempty"`
 	Name           *string `json:"name,omitempty"`
+}
+
+// The sort configuration for a column that is not used in a field well.
+type ColumnSort struct {
+	// A column of a data set.
+	SortBy *ColumnIdentifier `json:"sortBy,omitempty"`
 }
 
 // A tag for a column in a TagColumnOperation (https://docs.aws.amazon.com/quicksight/latest/APIReference/API_TagColumnOperation.html)
@@ -593,7 +785,22 @@ type ColumnToUnpivot struct {
 
 // The tooltip item for the columns that are not part of a field well.
 type ColumnTooltipItem struct {
-	Label *string `json:"label,omitempty"`
+	// A column of a data set.
+	Column     *ColumnIdentifier `json:"column,omitempty"`
+	Label      *string           `json:"label,omitempty"`
+	Visibility *string           `json:"visibility,omitempty"`
+}
+
+// A combo chart.
+//
+// The ComboChartVisual includes stacked bar combo charts and clustered bar
+// combo charts
+//
+// For more information, see Using combo charts (https://docs.aws.amazon.com/quicksight/latest/user/combo-charts.html)
+// in the Amazon Quick Suite User Guide.
+type ComboChartVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
 }
 
 // Determines the custom condition for an icon set.
@@ -621,6 +828,16 @@ type ConfluenceParameters struct {
 	ConfluenceURL *string `json:"confluenceURL,omitempty"`
 }
 
+// The context menu options for a visual's interactions.
+type ContextMenuOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// The contribution analysis visual display for a line, pie, or bar chart.
+type ContributionAnalysisDefault struct {
+	MeasureFieldID *string `json:"measureFieldID,omitempty"`
+}
+
 // A transform operation that creates calculated columns. Columns created in
 // one such operation form a lexical closure.
 type CreateColumnsOperation struct {
@@ -643,9 +860,62 @@ type CredentialPair struct {
 	Username                      *string                         `json:"username,omitempty"`
 }
 
+// The navigation operation that navigates between different sheets in the same
+// analysis.
+//
+// This is a union type structure. For this structure to be valid, only one
+// of the attributes can be defined.
+type CustomActionNavigationOperation struct {
+	// The navigation configuration for CustomActionNavigationOperation.
+	LocalNavigationConfiguration *LocalNavigationConfiguration `json:"localNavigationConfiguration,omitempty"`
+}
+
+// The set parameter operation that sets parameters in custom action.
+type CustomActionSetParametersOperation struct {
+	ParameterValueConfigurations []*SetParameterValueConfiguration `json:"parameterValueConfigurations,omitempty"`
+}
+
+// The URL operation that opens a link to another webpage.
+type CustomActionURLOperation struct {
+	URLTarget   *string `json:"urlTarget,omitempty"`
+	URLTemplate *string `json:"urlTemplate,omitempty"`
+}
+
 // The parameters that are required to connect to a custom connection data source.
 type CustomConnectionParameters struct {
 	ConnectionType *string `json:"connectionType,omitempty"`
+}
+
+// The configuration of a CustomContentVisual.
+type CustomContentConfiguration struct {
+	ContentURL *string `json:"contentURL,omitempty"`
+}
+
+// A visual that contains custom content.
+//
+// For more information, see Using custom visual content (https://docs.aws.amazon.com/quicksight/latest/user/custom-visual-content.html)
+// in the Amazon Quick Suite User Guide.
+type CustomContentVisual struct {
+	DataSetIdentifier    *string `json:"dataSetIdentifier,omitempty"`
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
+// A custom filter that filters based on a single value. This filter can be
+// partially matched.
+type CustomFilterConfiguration struct {
+	ParameterName *string `json:"parameterName,omitempty"`
+}
+
+// The customized parameter values.
+//
+// This is a union type structure. For this structure to be valid, only one
+// of the attributes can be defined.
+type CustomParameterValues struct {
+	DateTimeValues []metav1.Time `json:"dateTimeValues,omitempty"`
+	DecimalValues  []*float64    `json:"decimalValues,omitempty"`
+	IntegerValues  []*int64      `json:"integerValues,omitempty"`
+	StringValues   []*string     `json:"stringValues,omitempty"`
 }
 
 // The custom permissions profile.
@@ -661,12 +931,29 @@ type CustomSQL struct {
 	SQLQuery      *string        `json:"sqlQuery,omitempty"`
 }
 
+// The configuration of custom values for the destination parameter in DestinationParameterValueConfiguration.
+type CustomValuesConfiguration struct {
+	// The customized parameter values.
+	//
+	// This is a union type structure. For this structure to be valid, only one
+	// of the attributes can be defined.
+	CustomValues     *CustomParameterValues `json:"customValues,omitempty"`
+	IncludeNullValue *bool                  `json:"includeNullValue,omitempty"`
+}
+
 // Dashboard.
 type Dashboard struct {
 	ARN               *string      `json:"arn,omitempty"`
 	CreatedTime       *metav1.Time `json:"createdTime,omitempty"`
+	DashboardID       *string      `json:"dashboardID,omitempty"`
 	LastPublishedTime *metav1.Time `json:"lastPublishedTime,omitempty"`
 	LastUpdatedTime   *metav1.Time `json:"lastUpdatedTime,omitempty"`
+}
+
+// Dashboard error.
+type DashboardError struct {
+	Message          *string   `json:"message,omitempty"`
+	ViolatedEntities []*Entity `json:"violatedEntities,omitempty"`
 }
 
 // A filter that you apply when searching for dashboards.
@@ -676,13 +963,15 @@ type DashboardSearchFilter struct {
 
 // Dashboard source template.
 type DashboardSourceTemplate struct {
-	ARN *string `json:"arn,omitempty"`
+	ARN               *string             `json:"arn,omitempty"`
+	DataSetReferences []*DataSetReference `json:"dataSetReferences,omitempty"`
 }
 
 // Dashboard summary.
 type DashboardSummary struct {
 	ARN               *string      `json:"arn,omitempty"`
 	CreatedTime       *metav1.Time `json:"createdTime,omitempty"`
+	DashboardID       *string      `json:"dashboardID,omitempty"`
 	LastPublishedTime *metav1.Time `json:"lastPublishedTime,omitempty"`
 	LastUpdatedTime   *metav1.Time `json:"lastUpdatedTime,omitempty"`
 }
@@ -691,6 +980,8 @@ type DashboardSummary struct {
 type DashboardVersion struct {
 	ARN             *string      `json:"arn,omitempty"`
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
+	DataSetARNs     []*string    `json:"dataSetARNs,omitempty"`
+	Sheets          []*Sheet     `json:"sheets,omitempty"`
 	SourceEntityARN *string      `json:"sourceEntityARN,omitempty"`
 	Status          *string      `json:"status,omitempty"`
 	ThemeARN        *string      `json:"themeARN,omitempty"`
@@ -704,9 +995,93 @@ type DashboardVersionSummary struct {
 	Status          *string      `json:"status,omitempty"`
 }
 
+// A structure that contains the following elements:
+//
+//   - The DashboardId of the dashboard that has the visual that you want to
+//     embed.
+//
+//   - The SheetId of the sheet that has the visual that you want to embed.
+//
+//   - The VisualId of the visual that you want to embed.
+//
+// The DashboardId, SheetId, and VisualId can be found in the IDs for developers
+// section of the Embed visual pane of the visual's on-visual menu of the Amazon
+// Quick Sight console. You can also get the DashboardId with a ListDashboards
+// API operation.
+type DashboardVisualID struct {
+	DashboardID *string `json:"dashboardID,omitempty"`
+	SheetID     *string `json:"sheetID,omitempty"`
+	VisualID    *string `json:"visualID,omitempty"`
+}
+
+// The QA result that is made from dashboard visual.
+type DashboardVisualResult struct {
+	DashboardID *string `json:"dashboardID,omitempty"`
+	SheetID     *string `json:"sheetID,omitempty"`
+	SheetName   *string `json:"sheetName,omitempty"`
+	VisualID    *string `json:"visualID,omitempty"`
+}
+
+// The options for data bars.
+type DataBarsOptions struct {
+	FieldID *string `json:"fieldID,omitempty"`
+}
+
+// The data field series item configuration of a BarChartVisual.
+type DataFieldBarSeriesItem struct {
+	FieldID    *string `json:"fieldID,omitempty"`
+	FieldValue *string `json:"fieldValue,omitempty"`
+}
+
+// The data field series item configuration of a ComboChartVisual.
+type DataFieldComboSeriesItem struct {
+	FieldID    *string `json:"fieldID,omitempty"`
+	FieldValue *string `json:"fieldValue,omitempty"`
+}
+
+// The data field series item configuration of a line chart.
+type DataFieldSeriesItem struct {
+	FieldID    *string `json:"fieldID,omitempty"`
+	FieldValue *string `json:"fieldValue,omitempty"`
+}
+
+// The options that determine the presentation of the data labels.
+type DataLabelOptions struct {
+	CategoryLabelVisibility *string `json:"categoryLabelVisibility,omitempty"`
+	MeasureLabelVisibility  *string `json:"measureLabelVisibility,omitempty"`
+	TotalsVisibility        *string `json:"totalsVisibility,omitempty"`
+	Visibility              *string `json:"visibility,omitempty"`
+}
+
 // The color map that determines the color options for a particular element.
 type DataPathColor struct {
 	TimeGranularity *string `json:"timeGranularity,omitempty"`
+}
+
+// The option that specifies individual data values for labels.
+type DataPathLabelType struct {
+	FieldID    *string `json:"fieldID,omitempty"`
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The data path that needs to be sorted.
+type DataPathValue struct {
+	FieldID *string `json:"fieldID,omitempty"`
+}
+
+// The drill down options for data points in a dashbaord.
+type DataPointDrillUpDownOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// The data point menu options of a dashboard.
+type DataPointMenuLabelOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// The data point tooltip options.
+type DataPointTooltipOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
 }
 
 // Defines the type of aggregation function to apply to data during data preparation,
@@ -741,6 +1116,14 @@ type DataPrepListAggregationFunction struct {
 type DataPrepSimpleAggregationFunction struct {
 	FunctionType    *string `json:"functionType,omitempty"`
 	InputColumnName *string `json:"inputColumnName,omitempty"`
+}
+
+// Adds Q&A capabilities to a dashboard. If no topic is linked, Dashboard Q&A
+// uses the data values that are rendered on the dashboard. End users can use
+// Dashboard Q&A to ask for different slices of the data that they see on the
+// dashboard. If a topic is linked, Topic Q&A is enabled.
+type DataQAEnabledOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
 }
 
 // The generative Q&A settings of an embedded Quick Sight console.
@@ -797,6 +1180,7 @@ type DataSetDateRangeFilterCondition struct {
 // A data set.
 type DataSetIdentifierDeclaration struct {
 	DataSetARN *string `json:"dataSetARN,omitempty"`
+	Identifier *string `json:"identifier,omitempty"`
 }
 
 // A filter condition that compares numeric values using operators like EQUALS,
@@ -835,7 +1219,10 @@ type DataSetNumericRangeFilterCondition struct {
 
 // Dataset reference.
 type DataSetReference struct {
-	DataSetARN *string `json:"dataSetARN,omitempty"`
+	DataSetARN         *string `json:"dataSetARN,omitempty"`
+	DataSetPlaceholder *string `json:"dataSetPlaceholder,omitempty"`
+	// Reference field for DataSetARN
+	DataSetRef *ackv1alpha1.AWSResourceReferenceWrapper `json:"dataSetRef,omitempty"`
 }
 
 // A filter that you apply when searching for datasets.
@@ -1090,6 +1477,11 @@ type DataStoriesConfigurations struct {
 	Enabled *bool `json:"enabled,omitempty"`
 }
 
+// Executive summary option.
+type DataStoriesSharingOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
 // The parameters that are required to connect to a Databricks data source.
 type DatabricksParameters struct {
 	Host            *string `json:"host,omitempty"`
@@ -1115,9 +1507,24 @@ type DatasetParameter struct {
 	StringDatasetParameter *StringDatasetParameter `json:"stringDatasetParameter,omitempty"`
 }
 
+// The options that determine how a date axis is displayed.
+type DateAxisOptions struct {
+	MissingDateVisibility *string `json:"missingDateVisibility,omitempty"`
+}
+
 // The dimension type field with date type columns.
 type DateDimensionField struct {
-	DateGranularity *string `json:"dateGranularity,omitempty"`
+	// A column of a data set.
+	Column          *ColumnIdentifier `json:"column,omitempty"`
+	DateGranularity *string           `json:"dateGranularity,omitempty"`
+	FieldID         *string           `json:"fieldID,omitempty"`
+}
+
+// The measure type field with date type columns.
+type DateMeasureField struct {
+	// A column of a data set.
+	Column  *ColumnIdentifier `json:"column,omitempty"`
+	FieldID *string           `json:"fieldID,omitempty"`
 }
 
 // A date time parameter for a dataset.
@@ -1137,15 +1544,39 @@ type DateTimeDatasetParameterDefaultValues struct {
 	StaticValues []metav1.Time `json:"staticValues,omitempty"`
 }
 
+// The default values of the DateTimeParameterDeclaration.
+type DateTimeDefaultValues struct {
+	StaticValues []metav1.Time `json:"staticValues,omitempty"`
+}
+
+// A date-time parameter.
+type DateTimeParameter struct {
+	Name   *string       `json:"name,omitempty"`
+	Values []metav1.Time `json:"values,omitempty"`
+}
+
 // A parameter declaration for the DateTime data type.
 type DateTimeParameterDeclaration struct {
+	Name            *string `json:"name,omitempty"`
 	TimeGranularity *string `json:"timeGranularity,omitempty"`
+}
+
+// The display options of a control.
+type DateTimePickerControlDisplayOptions struct {
+	DateIconVisibility   *string `json:"dateIconVisibility,omitempty"`
+	HelperTextVisibility *string `json:"helperTextVisibility,omitempty"`
 }
 
 // The configuration that defines the default value of a DateTime parameter
 // when a value has not been set.
 type DateTimeValueWhenUnsetConfiguration struct {
 	CustomValue *metav1.Time `json:"customValue,omitempty"`
+}
+
+// Decal settings for accessibility features that define visual patterns and
+// styling for data elements.
+type DecalSettings struct {
+	DecalVisibility *string `json:"decalVisibility,omitempty"`
 }
 
 // A decimal parameter for a dataset.
@@ -1164,6 +1595,22 @@ type DecimalDatasetParameterDefaultValues struct {
 	StaticValues []*float64 `json:"staticValues,omitempty"`
 }
 
+// The default values of the DecimalParameterDeclaration.
+type DecimalDefaultValues struct {
+	StaticValues []*float64 `json:"staticValues,omitempty"`
+}
+
+// A decimal parameter.
+type DecimalParameter struct {
+	Name   *string    `json:"name,omitempty"`
+	Values []*float64 `json:"values,omitempty"`
+}
+
+// A parameter declaration for the Decimal data type.
+type DecimalParameterDeclaration struct {
+	Name *string `json:"name,omitempty"`
+}
+
 // The configuration that defines the default value of a Decimal parameter when
 // a value has not been set.
 type DecimalValueWhenUnsetConfiguration struct {
@@ -1175,7 +1622,13 @@ type DecimalValueWhenUnsetConfiguration struct {
 // This is a union type structure. For this structure to be valid, only one
 // of the attributes can be defined.
 type DestinationParameterValueConfiguration struct {
-	SourceParameterName *string `json:"sourceParameterName,omitempty"`
+	// The configuration of custom values for the destination parameter in DestinationParameterValueConfiguration.
+	CustomValuesConfiguration *CustomValuesConfiguration `json:"customValuesConfiguration,omitempty"`
+	SelectAllValueOptions     *string                    `json:"selectAllValueOptions,omitempty"`
+	// A column of a data set.
+	SourceColumn        *ColumnIdentifier `json:"sourceColumn,omitempty"`
+	SourceField         *string           `json:"sourceField,omitempty"`
+	SourceParameterName *string           `json:"sourceParameterName,omitempty"`
 }
 
 // Defines a destination table in data preparation that receives the final transformed
@@ -1199,6 +1652,37 @@ type DisplayFormatOptions struct {
 	UseGrouping        *bool `json:"useGrouping,omitempty"`
 }
 
+// The label options of the label that is displayed in the center of a donut
+// chart. This option isn't available for pie charts.
+type DonutCenterOptions struct {
+	LabelVisibility *string `json:"labelVisibility,omitempty"`
+}
+
+// Defines different defaults to the users or groups based on mapping.
+type DynamicDefaultValue struct {
+	// A column of a data set.
+	DefaultValueColumn *ColumnIdentifier `json:"defaultValueColumn,omitempty"`
+	// A column of a data set.
+	GroupNameColumn *ColumnIdentifier `json:"groupNameColumn,omitempty"`
+	// A column of a data set.
+	UserNameColumn *ColumnIdentifier `json:"userNameColumn,omitempty"`
+}
+
+// An empty visual.
+//
+// Empty visuals are used in layouts but have not been configured to show any
+// data. A new visual created in the Quick Sight console is considered an EmptyVisual
+// until a visual type is selected.
+type EmptyVisual struct {
+	DataSetIdentifier *string `json:"dataSetIdentifier,omitempty"`
+	VisualID          *string `json:"visualID,omitempty"`
+}
+
+// An object, structure, or sub-structure of an analysis, template, or dashboard.
+type Entity struct {
+	Path *string `json:"path,omitempty"`
+}
+
 // Error information for the SPICE ingestion of a dataset.
 type ErrorInfo struct {
 	Message *string `json:"message,omitempty"`
@@ -1213,6 +1697,7 @@ type ExasolParameters struct {
 // The exclude period of TimeRangeFilter or RelativeDatesFilter.
 type ExcludePeriodConfiguration struct {
 	Granularity *string `json:"granularity,omitempty"`
+	Status      *string `json:"status,omitempty"`
 }
 
 // The executive summary settings of an embedded Quick Sight console or dashboard.
@@ -1220,11 +1705,47 @@ type ExecutiveSummaryConfigurations struct {
 	Enabled *bool `json:"enabled,omitempty"`
 }
 
+// Data stories sharing option.
+type ExecutiveSummaryOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// Determines if hidden fields are included in an exported dashboard.
+type ExportHiddenFieldsOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// Export to .csv option.
+type ExportToCSVOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// Determines whether or not hidden fields are visible on exported dashbaords.
+type ExportWithHiddenFieldsOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
 // An entry that appears when a KeyRegistration update to Quick Sight fails.
 type FailedKeyRegistrationEntry struct {
 	KeyARN      *string `json:"keyARN,omitempty"`
+	Message     *string `json:"message,omitempty"`
 	SenderFault *bool   `json:"senderFault,omitempty"`
 	StatusCode  *int64  `json:"statusCode,omitempty"`
+}
+
+// The field series item configuration of a BarChartVisual.
+type FieldBarSeriesItem struct {
+	FieldID *string `json:"fieldID,omitempty"`
+}
+
+// The setup for the detailed tooltip.
+type FieldBasedTooltip struct {
+	AggregationVisibility *string `json:"aggregationVisibility,omitempty"`
+}
+
+// The field series item configuration of a ComboChartVisual.
+type FieldComboSeriesItem struct {
+	FieldID *string `json:"fieldID,omitempty"`
 }
 
 // A FieldFolder element is a folder that contains fields and nested subfolders.
@@ -1233,9 +1754,79 @@ type FieldFolder struct {
 	Description *string   `json:"description,omitempty"`
 }
 
+// The field label type.
+type FieldLabelType struct {
+	FieldID    *string `json:"fieldID,omitempty"`
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The field series item configuration of a line chart.
+type FieldSeriesItem struct {
+	FieldID *string `json:"fieldID,omitempty"`
+}
+
+// The sort configuration for a field in a field well.
+type FieldSort struct {
+	FieldID *string `json:"fieldID,omitempty"`
+}
+
 // The tooltip item for the fields.
 type FieldTooltipItem struct {
-	Label *string `json:"label,omitempty"`
+	FieldID    *string `json:"fieldID,omitempty"`
+	Label      *string `json:"label,omitempty"`
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The conditional formatting that determines the shape of the filled map.
+type FilledMapShapeConditionalFormatting struct {
+	FieldID *string `json:"fieldID,omitempty"`
+}
+
+// A filled map.
+//
+// For more information, see Creating filled maps (https://docs.aws.amazon.com/quicksight/latest/user/filled-maps.html)
+// in the Amazon Quick Suite User Guide.
+type FilledMapVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
+// A control from a filter that is scoped across more than one sheet. This represents
+// your filter control on a sheet
+type FilterCrossSheetControl struct {
+	FilterControlID *string `json:"filterControlID,omitempty"`
+	SourceFilterID  *string `json:"sourceFilterID,omitempty"`
+}
+
+// A control from a date filter that is used to specify date and time.
+type FilterDateTimePickerControl struct {
+	FilterControlID *string `json:"filterControlID,omitempty"`
+	SourceFilterID  *string `json:"sourceFilterID,omitempty"`
+}
+
+// A control to display a dropdown list with buttons that are used to select
+// a single value.
+type FilterDropDownControl struct {
+	FilterControlID *string `json:"filterControlID,omitempty"`
+	SourceFilterID  *string `json:"sourceFilterID,omitempty"`
+}
+
+// A grouping of individual filters. Filter groups are applied to the same group
+// of visuals.
+//
+// For more information, see Adding filter conditions (group filters) with AND
+// and OR operators (https://docs.aws.amazon.com/quicksight/latest/user/add-a-compound-filter.html)
+// in the Amazon Quick Suite User Guide.
+type FilterGroup struct {
+	FilterGroupID *string `json:"filterGroupID,omitempty"`
+	Status        *string `json:"status,omitempty"`
+}
+
+// A control to display a list of buttons or boxes. This is used to select either
+// a single value or multiple values.
+type FilterListControl struct {
+	FilterControlID *string `json:"filterControlID,omitempty"`
+	SourceFilterID  *string `json:"sourceFilterID,omitempty"`
 }
 
 // A transform operation that filters rows based on a condition.
@@ -1250,6 +1841,31 @@ type FilterOperation struct {
 	// A filter condition for string columns, supporting both comparison and list-based
 	// filtering.
 	StringFilterCondition *DataSetStringFilterCondition `json:"stringFilterCondition,omitempty"`
+}
+
+// A control from a date filter that is used to specify the relative date.
+type FilterRelativeDateTimeControl struct {
+	FilterControlID *string `json:"filterControlID,omitempty"`
+	SourceFilterID  *string `json:"sourceFilterID,omitempty"`
+}
+
+// A control to display a horizontal toggle bar. This is used to change a value
+// by sliding the toggle.
+type FilterSliderControl struct {
+	FilterControlID *string `json:"filterControlID,omitempty"`
+	SourceFilterID  *string `json:"sourceFilterID,omitempty"`
+}
+
+// A control to display a text box that is used to enter multiple entries.
+type FilterTextAreaControl struct {
+	FilterControlID *string `json:"filterControlID,omitempty"`
+	SourceFilterID  *string `json:"sourceFilterID,omitempty"`
+}
+
+// A control to display a text box that is used to enter a single entry.
+type FilterTextFieldControl struct {
+	FilterControlID *string `json:"filterControlID,omitempty"`
+	SourceFilterID  *string `json:"sourceFilterID,omitempty"`
 }
 
 // A transform operation that applies one or more filter conditions.
@@ -1304,7 +1920,49 @@ type FontConfiguration struct {
 
 // The forecast computation configuration.
 type ForecastComputation struct {
-	Name *string `json:"name,omitempty"`
+	ComputationID *string `json:"computationID,omitempty"`
+	Name          *string `json:"name,omitempty"`
+}
+
+// An element within a free-form layout.
+type FreeFormLayoutElement struct {
+	ElementID  *string `json:"elementID,omitempty"`
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The background style configuration of a free-form layout element.
+type FreeFormLayoutElementBackgroundStyle struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The background style configuration of a free-form layout element.
+type FreeFormLayoutElementBorderStyle struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The options that determine the presentation of the data labels.
+type FunnelChartDataLabelOptions struct {
+	CategoryLabelVisibility *string `json:"categoryLabelVisibility,omitempty"`
+	MeasureLabelVisibility  *string `json:"measureLabelVisibility,omitempty"`
+	Visibility              *string `json:"visibility,omitempty"`
+}
+
+// A funnel chart.
+//
+// For more information, see Using funnel charts (https://docs.aws.amazon.com/quicksight/latest/user/funnel-visual-content.html)
+// in the Amazon Quick Suite User Guide.
+type FunnelChartVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
+// A gauge chart.
+//
+// For more information, see Using gauge charts (https://docs.aws.amazon.com/quicksight/latest/user/gauge-chart.html)
+// in the Amazon Quick Suite User Guide.
+type GaugeChartVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
 }
 
 // The QA result that is made from generated answer.
@@ -1324,20 +1982,65 @@ type GeoSpatialColumnGroup struct {
 	Name        *string   `json:"name,omitempty"`
 }
 
+// The definition for a categorical color.
+type GeospatialCategoricalColor struct {
+	NullDataVisibility *string `json:"nullDataVisibility,omitempty"`
+}
+
 // The categorical data color for a single category.
 type GeospatialCategoricalDataColor struct {
 	DataValue *string `json:"dataValue,omitempty"`
 }
 
+// The definition for a gradient color.
+type GeospatialGradientColor struct {
+	NullDataVisibility *string `json:"nullDataVisibility,omitempty"`
+}
+
 // The properties for a single geospatial layer.
 type GeospatialLayerItem struct {
-	Label   *string `json:"label,omitempty"`
-	LayerID *string `json:"layerID,omitempty"`
+	Label      *string `json:"label,omitempty"`
+	LayerID    *string `json:"layerID,omitempty"`
+	Visibility *string `json:"visibility,omitempty"`
 }
 
 // The custom actions for a layer.
 type GeospatialLayerJoinDefinition struct {
 	ShapeKeyField *string `json:"shapeKeyField,omitempty"`
+}
+
+// The map style properties for a map.
+type GeospatialMapStyle struct {
+	BaseMapVisibility *string `json:"baseMapVisibility,omitempty"`
+}
+
+// A geospatial map or a points on map visual.
+//
+// For more information, see Creating point maps (https://docs.aws.amazon.com/quicksight/latest/user/point-maps.html)
+// in the Amazon Quick Suite User Guide.
+type GeospatialMapVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
+// The source properties for a geospatial static file.
+type GeospatialStaticFileSource struct {
+	StaticFileID *string `json:"staticFileID,omitempty"`
+}
+
+// An element within a grid layout.
+type GridLayoutElement struct {
+	ElementID *string `json:"elementID,omitempty"`
+}
+
+// The background style configuration of a grid layout element.
+type GridLayoutElementBackgroundStyle struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The border style configuration of a grid layout element.
+type GridLayoutElementBorderStyle struct {
+	Visibility *string `json:"visibility,omitempty"`
 }
 
 // A group in Quick Sight consists of a set of users. You can use groups to
@@ -1360,12 +2063,36 @@ type GroupSearchFilter struct {
 
 // The growth rate computation configuration.
 type GrowthRateComputation struct {
-	Name *string `json:"name,omitempty"`
+	ComputationID *string `json:"computationID,omitempty"`
+	Name          *string `json:"name,omitempty"`
 }
 
 // The display options for gutter spacing between tiles on a sheet.
 type GutterStyle struct {
 	Show *bool `json:"show,omitempty"`
+}
+
+// The configuration of a header or footer section.
+type HeaderFooterSectionConfiguration struct {
+	SectionID *string `json:"sectionID,omitempty"`
+}
+
+// A heat map.
+//
+// For more information, see Using heat maps (https://docs.aws.amazon.com/quicksight/latest/user/heat-map.html)
+// in the Amazon Quick Suite User Guide.
+type HeatMapVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
+// A histogram.
+//
+// For more information, see Using histograms (https://docs.aws.amazon.com/quicksight/latest/user/histogram-charts.html)
+// in the Amazon Quick Suite User Guide.
+type HistogramVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
 }
 
 // Authentication metadata for IAM-based connections, used for first-party Amazon
@@ -1391,10 +2118,52 @@ type Image struct {
 	GeneratedImageURL *string `json:"generatedImageURL,omitempty"`
 }
 
+// A custom action defined on an image.
+type ImageCustomAction struct {
+	ActionOperations []*ImageCustomActionOperation `json:"actionOperations,omitempty"`
+	CustomActionID   *string                       `json:"customActionID,omitempty"`
+	Name             *string                       `json:"name,omitempty"`
+	Status           *string                       `json:"status,omitempty"`
+	Trigger          *string                       `json:"trigger,omitempty"`
+}
+
+// The operation that is defined by the custom action.
+//
+// This is a union type structure. For this structure to be valid, only one
+// of the attributes can be defined.
+type ImageCustomActionOperation struct {
+	// The navigation operation that navigates between different sheets in the same
+	// analysis.
+	//
+	// This is a union type structure. For this structure to be valid, only one
+	// of the attributes can be defined.
+	NavigationOperation *CustomActionNavigationOperation `json:"navigationOperation,omitempty"`
+	// The set parameter operation that sets parameters in custom action.
+	SetParametersOperation *CustomActionSetParametersOperation `json:"setParametersOperation,omitempty"`
+	// The URL operation that opens a link to another webpage.
+	URLOperation *CustomActionURLOperation `json:"urlOperation,omitempty"`
+}
+
+// The general image interactions setup for image publish options.
+type ImageInteractionOptions struct {
+	// The menu options for the interactions of an image.
+	ImageMenuOption *ImageMenuOption `json:"imageMenuOption,omitempty"`
+}
+
+// The menu options for the interactions of an image.
+type ImageMenuOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
 // The source of the image.
 type ImageSource struct {
 	PublicURL *string `json:"publicURL,omitempty"`
 	S3URI     *string `json:"s3URI,omitempty"`
+}
+
+// A static file that contains an image.
+type ImageStaticFile struct {
+	StaticFileID *string `json:"staticFileID,omitempty"`
 }
 
 // The parameters that are required to connect to a Impala data source.
@@ -1434,6 +2203,16 @@ type InputColumn struct {
 	Type    *string `json:"type,omitempty"`
 }
 
+// An insight visual.
+//
+// For more information, see Working with insights (https://docs.aws.amazon.com/quicksight/latest/user/computational-insights.html)
+// in the Amazon Quick Suite User Guide.
+type InsightVisual struct {
+	DataSetIdentifier    *string `json:"dataSetIdentifier,omitempty"`
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
 // An integer parameter for a dataset.
 type IntegerDatasetParameter struct {
 	// The default values of an integer parameter.
@@ -1448,6 +2227,30 @@ type IntegerDatasetParameter struct {
 // The default values of an integer parameter.
 type IntegerDatasetParameterDefaultValues struct {
 	StaticValues []*int64 `json:"staticValues,omitempty"`
+}
+
+// The default values of the IntegerParameterDeclaration.
+type IntegerDefaultValues struct {
+	StaticValues []*int64 `json:"staticValues,omitempty"`
+}
+
+// An integer parameter.
+type IntegerParameter struct {
+	Name   *string  `json:"name,omitempty"`
+	Values []*int64 `json:"values,omitempty"`
+}
+
+// A parameter declaration for the Integer data type.
+type IntegerParameterDeclaration struct {
+	Name *string `json:"name,omitempty"`
+}
+
+// A parameter declaration for the Integer data type.
+//
+// This is a union type structure. For this structure to be valid, only one
+// of the attributes can be defined.
+type IntegerValueWhenUnsetConfiguration struct {
+	CustomValue *int64 `json:"customValue,omitempty"`
 }
 
 // The limit configuration of the visual display for an axis.
@@ -1505,6 +2308,22 @@ type JoinOperation struct {
 	Type                   *string                `json:"type,omitempty"`
 }
 
+// The options that determine the visibility, color, type, and tooltip visibility
+// of the sparkline of a KPI visual.
+type KPISparklineOptions struct {
+	TooltipVisibility *string `json:"tooltipVisibility,omitempty"`
+	Visibility        *string `json:"visibility,omitempty"`
+}
+
+// A key performance indicator (KPI).
+//
+// For more information, see Using KPIs (https://docs.aws.amazon.com/quicksight/latest/user/kpi.html)
+// in the Amazon Quick Suite User Guide.
+type KPIVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
 // The combination of username, private key and passphrase that are used as
 // credentials.
 type KeyPairCredentials struct {
@@ -1516,11 +2335,86 @@ type KeyPairCredentials struct {
 // The share label options for the labels.
 type LabelOptions struct {
 	CustomLabel *string `json:"customLabel,omitempty"`
+	Visibility  *string `json:"visibility,omitempty"`
+}
+
+// A layer custom action.
+type LayerCustomAction struct {
+	CustomActionID *string `json:"customActionID,omitempty"`
+	Status         *string `json:"status,omitempty"`
+}
+
+// The operation that is defined by the custom action.
+//
+// This is a union type structure. For this structure to be valid, only one
+// of the attributes can be defined.
+type LayerCustomActionOperation struct {
+	// The navigation operation that navigates between different sheets in the same
+	// analysis.
+	//
+	// This is a union type structure. For this structure to be valid, only one
+	// of the attributes can be defined.
+	NavigationOperation *CustomActionNavigationOperation `json:"navigationOperation,omitempty"`
+	// The set parameter operation that sets parameters in custom action.
+	SetParametersOperation *CustomActionSetParametersOperation `json:"setParametersOperation,omitempty"`
+	// The URL operation that opens a link to another webpage.
+	URLOperation *CustomActionURLOperation `json:"urlOperation,omitempty"`
+}
+
+// A layer map visual.
+type LayerMapVisual struct {
+	DataSetIdentifier    *string `json:"dataSetIdentifier,omitempty"`
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
+// The options for the legend setup of a visual.
+type LegendOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// Line styles options for a line series in LineChartVisual.
+type LineChartLineStyleSettings struct {
+	LineVisibility *string `json:"lineVisibility,omitempty"`
+}
+
+// Marker styles options for a line series in LineChartVisual.
+type LineChartMarkerStyleSettings struct {
+	MarkerVisibility *string `json:"markerVisibility,omitempty"`
+}
+
+// A line chart.
+//
+// For more information, see Using line charts (https://docs.aws.amazon.com/quicksight/latest/user/line-charts.html)
+// in the Amazon Quick Suite User Guide.
+type LineChartVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
 }
 
 // A structure that contains the configuration of a shareable link to the dashboard.
 type LinkSharingConfiguration struct {
 	Permissions []*ResourcePermission `json:"permissions,omitempty"`
+}
+
+// The configuration of the search options in a list control.
+type ListControlSearchOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The configuration of the Select all options in a list control.
+type ListControlSelectAllOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The configuration of loading animation in free-form layout.
+type LoadingAnimation struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The navigation configuration for CustomActionNavigationOperation.
+type LocalNavigationConfiguration struct {
+	TargetSheetID *string `json:"targetSheetID,omitempty"`
 }
 
 // A logical table is a unit that joins and that data transformations operate
@@ -1549,6 +2443,14 @@ type LogoConfiguration struct {
 	AltText *string `json:"altText,omitempty"`
 }
 
+// The text format for a subtitle.
+//
+// This is a union type structure. For this structure to be valid, only one
+// of the attributes can be defined.
+type LongFormatText struct {
+	PlainText *string `json:"plainText,omitempty"`
+}
+
 // The lookback window setup of an incremental refresh configuration.
 type LookbackWindow struct {
 	ColumnName *string `json:"columnName,omitempty"`
@@ -1560,6 +2462,12 @@ type ManifestFileLocation struct {
 	// Reference field for Bucket
 	BucketRef *ackv1alpha1.AWSResourceReferenceWrapper `json:"bucketRef,omitempty"`
 	Key       *string                                  `json:"key,omitempty"`
+}
+
+// A dataset parameter that is mapped to an analysis parameter.
+type MappedDataSetParameter struct {
+	DataSetIdentifier    *string `json:"dataSetIdentifier,omitempty"`
+	DataSetParameterName *string `json:"dataSetParameterName,omitempty"`
 }
 
 // The display options for margins around the outside edge of sheets.
@@ -1574,9 +2482,15 @@ type MariaDBParameters struct {
 	Port     *int64  `json:"port,omitempty"`
 }
 
+// The maximum label of a data path label.
+type MaximumLabelType struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
 // The maximum and minimum computation configuration.
 type MaximumMinimumComputation struct {
-	Name *string `json:"name,omitempty"`
+	ComputationID *string `json:"computationID,omitempty"`
+	Name          *string `json:"name,omitempty"`
 }
 
 // An object that consists of a member Amazon Resource Name (ARN) and a member
@@ -1587,7 +2501,13 @@ type MemberIDARNPair struct {
 
 // The metric comparison computation configuration.
 type MetricComparisonComputation struct {
-	Name *string `json:"name,omitempty"`
+	ComputationID *string `json:"computationID,omitempty"`
+	Name          *string `json:"name,omitempty"`
+}
+
+// The minimum label of a data path label.
+type MinimumLabelType struct {
+	Visibility *string `json:"visibility,omitempty"`
 }
 
 // The parameters for MySQL.
@@ -1614,7 +2534,10 @@ type NamespaceInfoV2 struct {
 // A NestedFilter filters data with a subset of data that is defined by the
 // nested inner filter.
 type NestedFilter struct {
-	IncludeInnerSet *bool `json:"includeInnerSet,omitempty"`
+	// A column of a data set.
+	Column          *ColumnIdentifier `json:"column,omitempty"`
+	FilterID        *string           `json:"filterID,omitempty"`
+	IncludeInnerSet *bool             `json:"includeInnerSet,omitempty"`
 }
 
 // The structure that contains information about a network interface.
@@ -1632,10 +2555,46 @@ type NewDefaultValues struct {
 	StringStaticValues   []*string     `json:"stringStaticValues,omitempty"`
 }
 
+// The numeric equality type drill down filter.
+type NumericEqualityDrillDownFilter struct {
+	// A column of a data set.
+	Column *ColumnIdentifier `json:"column,omitempty"`
+}
+
+// A NumericEqualityFilter filters values that are equal to the specified value.
+type NumericEqualityFilter struct {
+	// A column of a data set.
+	Column        *ColumnIdentifier `json:"column,omitempty"`
+	FilterID      *string           `json:"filterID,omitempty"`
+	ParameterName *string           `json:"parameterName,omitempty"`
+}
+
 // A NumericRangeFilter filters values that are within the value range.
 type NumericRangeFilter struct {
-	IncludeMaximum *bool `json:"includeMaximum,omitempty"`
-	IncludeMinimum *bool `json:"includeMinimum,omitempty"`
+	// A column of a data set.
+	Column         *ColumnIdentifier `json:"column,omitempty"`
+	FilterID       *string           `json:"filterID,omitempty"`
+	IncludeMaximum *bool             `json:"includeMaximum,omitempty"`
+	IncludeMinimum *bool             `json:"includeMinimum,omitempty"`
+}
+
+// The value input pf the numeric range filter.
+type NumericRangeFilterValue struct {
+	Parameter *string `json:"parameter,omitempty"`
+}
+
+// The dimension type field with numerical type columns.
+type NumericalDimensionField struct {
+	// A column of a data set.
+	Column  *ColumnIdentifier `json:"column,omitempty"`
+	FieldID *string           `json:"fieldID,omitempty"`
+}
+
+// The measure type field with numerical type columns.
+type NumericalMeasureField struct {
+	// A column of a data set.
+	Column  *ColumnIdentifier `json:"column,omitempty"`
+	FieldID *string           `json:"fieldID,omitempty"`
 }
 
 // An object that contains information needed to create a data source connection
@@ -1688,6 +2647,72 @@ type PaginationConfiguration struct {
 	PageSize *int64 `json:"pageSize,omitempty"`
 }
 
+// A collection of options that configure how each panel displays in a small
+// multiples chart.
+type PanelConfiguration struct {
+	BackgroundVisibility *string `json:"backgroundVisibility,omitempty"`
+	BorderVisibility     *string `json:"borderVisibility,omitempty"`
+	GutterVisibility     *string `json:"gutterVisibility,omitempty"`
+}
+
+// The options that determine the title styles for each small multiples panel.
+type PanelTitleOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// A control from a date parameter that specifies date and time.
+type ParameterDateTimePickerControl struct {
+	ParameterControlID  *string `json:"parameterControlID,omitempty"`
+	SourceParameterName *string `json:"sourceParameterName,omitempty"`
+}
+
+// A control to display a dropdown list with buttons that are used to select
+// a single value.
+type ParameterDropDownControl struct {
+	ParameterControlID  *string `json:"parameterControlID,omitempty"`
+	SourceParameterName *string `json:"sourceParameterName,omitempty"`
+}
+
+// A control to display a list with buttons or boxes that are used to select
+// either a single value or multiple values.
+type ParameterListControl struct {
+	ParameterControlID  *string `json:"parameterControlID,omitempty"`
+	SourceParameterName *string `json:"sourceParameterName,omitempty"`
+}
+
+// A list of selectable values that are used in a control.
+type ParameterSelectableValues struct {
+	// A column of a data set.
+	LinkToDataSetColumn *ColumnIdentifier `json:"linkToDataSetColumn,omitempty"`
+}
+
+// A control to display a horizontal toggle bar. This is used to change a value
+// by sliding the toggle.
+type ParameterSliderControl struct {
+	ParameterControlID  *string `json:"parameterControlID,omitempty"`
+	SourceParameterName *string `json:"sourceParameterName,omitempty"`
+}
+
+// A control to display a text box that is used to enter multiple entries.
+type ParameterTextAreaControl struct {
+	ParameterControlID  *string `json:"parameterControlID,omitempty"`
+	SourceParameterName *string `json:"sourceParameterName,omitempty"`
+}
+
+// A control to display a text box that is used to enter a single entry.
+type ParameterTextFieldControl struct {
+	ParameterControlID  *string `json:"parameterControlID,omitempty"`
+	SourceParameterName *string `json:"sourceParameterName,omitempty"`
+}
+
+// A list of Quick Sight parameters and the list's override values.
+type Parameters struct {
+	DateTimeParameters []*DateTimeParameter `json:"dateTimeParameters,omitempty"`
+	DecimalParameters  []*DecimalParameter  `json:"decimalParameters,omitempty"`
+	IntegerParameters  []*IntegerParameter  `json:"integerParameters,omitempty"`
+	StringParameters   []*StringParameter   `json:"stringParameters,omitempty"`
+}
+
 // References a parent dataset that serves as a data source, including its columns
 // and metadata.
 type ParentDataSet struct {
@@ -1703,11 +2728,13 @@ type PerformanceConfiguration struct {
 
 // The period over period computation configuration.
 type PeriodOverPeriodComputation struct {
-	Name *string `json:"name,omitempty"`
+	ComputationID *string `json:"computationID,omitempty"`
+	Name          *string `json:"name,omitempty"`
 }
 
 // The period to date computation configuration.
 type PeriodToDateComputation struct {
+	ComputationID         *string `json:"computationID,omitempty"`
 	Name                  *string `json:"name,omitempty"`
 	PeriodTimeGranularity *string `json:"periodTimeGranularity,omitempty"`
 }
@@ -1727,11 +2754,37 @@ type PhysicalTable struct {
 	SaaSTable *SaaSTable `json:"saaSTable,omitempty"`
 }
 
+// A pie or donut chart.
+//
+// The PieChartVisual structure describes a visual that is a member of the pie
+// chart family.
+//
+// The following charts can be described by using this structure:
+//
+//   - Pie charts
+//
+//   - Donut charts
+//
+// For more information, see Using pie charts (https://docs.aws.amazon.com/quicksight/latest/user/pie-chart.html)
+// in the Amazon Quick Suite User Guide.
+//
+// For more information, see Using donut charts (https://docs.aws.amazon.com/quicksight/latest/user/donut-chart.html)
+// in the Amazon Quick Suite User Guide.
+type PieChartVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
 // Configuration for a pivot operation, specifying which column contains labels
 // and how to pivot them.
 type PivotConfiguration struct {
 	LabelColumnName *string         `json:"labelColumnName,omitempty"`
 	PivotedLabels   []*PivotedLabel `json:"pivotedLabels,omitempty"`
+}
+
+// The field sort options for a pivot table sort configuration.
+type PivotFieldSortOptions struct {
+	FieldID *string `json:"fieldID,omitempty"`
 }
 
 // A transform operation that pivots data by converting row values into columns.
@@ -1749,14 +2802,60 @@ type PivotOperation struct {
 	ValueColumnConfiguration *ValueColumnConfiguration `json:"valueColumnConfiguration,omitempty"`
 }
 
+// The cell conditional formatting option for a pivot table.
+type PivotTableCellConditionalFormatting struct {
+	FieldID *string `json:"fieldID,omitempty"`
+}
+
 // The target of a pivot table field collapse state.
 type PivotTableFieldCollapseStateTarget struct {
 	FieldID *string `json:"fieldID,omitempty"`
 }
 
+// The selected field options for the pivot table field options.
+type PivotTableFieldOption struct {
+	FieldID    *string `json:"fieldID,omitempty"`
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The optional configuration of subtotals cells.
+type PivotTableFieldSubtotalOptions struct {
+	FieldID *string `json:"fieldID,omitempty"`
+}
+
+// The table options for a pivot table visual.
+type PivotTableOptions struct {
+	CollapsedRowDimensionsVisibility *string `json:"collapsedRowDimensionsVisibility,omitempty"`
+	ColumnNamesVisibility            *string `json:"columnNamesVisibility,omitempty"`
+	SingleMetricVisibility           *string `json:"singleMetricVisibility,omitempty"`
+	ToggleButtonsVisibility          *string `json:"toggleButtonsVisibility,omitempty"`
+}
+
+// The paginated report options for a pivot table visual.
+type PivotTablePaginatedReportOptions struct {
+	OverflowColumnHeaderVisibility *string `json:"overflowColumnHeaderVisibility,omitempty"`
+	VerticalOverflowVisibility     *string `json:"verticalOverflowVisibility,omitempty"`
+}
+
+// The options for the label thta is located above the row headers. This option
+// is only applicable when RowsLayout is set to HIERARCHY.
+type PivotTableRowsLabelOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// A pivot table.
+//
+// For more information, see Using pivot tables (https://docs.aws.amazon.com/quicksight/latest/user/pivot-table.html)
+// in the Amazon Quick Suite User Guide.
+type PivotTableVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
 // The optional configuration of totals cells in a PivotTableVisual.
 type PivotTotalOptions struct {
-	CustomLabel *string `json:"customLabel,omitempty"`
+	CustomLabel      *string `json:"customLabel,omitempty"`
+	TotalsVisibility *string `json:"totalsVisibility,omitempty"`
 }
 
 // Specifies a label value to be pivoted into a separate column, including the
@@ -1770,7 +2869,9 @@ type PivotedLabel struct {
 // A flexible visualization type that allows engineers to create new custom
 // charts in Quick Sight.
 type PluginVisual struct {
-	PluginARN *string `json:"pluginARN,omitempty"`
+	PluginARN            *string `json:"pluginARN,omitempty"`
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
 }
 
 // A query limits configuration.
@@ -1798,6 +2899,12 @@ type PrestoParameters struct {
 	Port    *int64  `json:"port,omitempty"`
 }
 
+// The options that determine the presentation of the progress bar of a KPI
+// visual.
+type ProgressBarOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
 // A transform operation that projects columns. Operations that come after a
 // projection can only refer to projected columns.
 type ProjectOperation struct {
@@ -1823,6 +2930,32 @@ type QDataKey struct {
 type QueueInfo struct {
 	QueuedIngestion    *string `json:"queuedIngestion,omitempty"`
 	WaitingOnIngestion *string `json:"waitingOnIngestion,omitempty"`
+}
+
+// Determines if Actions in Amazon Quick Suite are enabled in a dashboard..
+type QuickSuiteActionsOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// The configured style settings of a radar chart.
+type RadarChartAreaStyleSettings struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The configuration of a RadarChartVisual.
+type RadarChartConfiguration struct {
+	AlternateBandColorsVisibility *string `json:"alternateBandColorsVisibility,omitempty"`
+}
+
+// A radar chart visual.
+type RadarChartVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
+// The range ends label type of a data path label.
+type RangeEndsLabelType struct {
+	Visibility *string `json:"visibility,omitempty"`
 }
 
 // The parameters for Amazon RDS.
@@ -1872,6 +3005,22 @@ type RedshiftParameters struct {
 	Port                        *int64                       `json:"port,omitempty"`
 }
 
+// The reference line visual display options.
+type ReferenceLine struct {
+	Status *string `json:"status,omitempty"`
+}
+
+// The configuration for a custom label on a ReferenceLine.
+type ReferenceLineCustomLabelConfiguration struct {
+	CustomLabel *string `json:"customLabel,omitempty"`
+}
+
+// The dynamic configuration of the reference line data configuration.
+type ReferenceLineDynamicDataConfiguration struct {
+	// A column of a data set.
+	Column *ColumnIdentifier `json:"column,omitempty"`
+}
+
 // The static data configuration of the reference line data configuration.
 type ReferenceLineStaticDataConfiguration struct {
 	Value *float64 `json:"value,omitempty"`
@@ -1902,6 +3051,11 @@ type RegisteredCustomerManagedKey struct {
 	KeyARN     *string `json:"keyARN,omitempty"`
 }
 
+// Information about the dashboard you want to embed.
+type RegisteredUserDashboardEmbeddingConfiguration struct {
+	InitialDashboardID *string `json:"initialDashboardID,omitempty"`
+}
+
 // A physical table type for relational data sources.
 type RelationalTable struct {
 	Catalog       *string        `json:"catalog,omitempty"`
@@ -1913,8 +3067,12 @@ type RelationalTable struct {
 
 // A RelativeDatesFilter filters relative dates values.
 type RelativeDatesFilter struct {
-	MinimumGranularity *string `json:"minimumGranularity,omitempty"`
-	TimeGranularity    *string `json:"timeGranularity,omitempty"`
+	// A column of a data set.
+	Column             *ColumnIdentifier `json:"column,omitempty"`
+	FilterID           *string           `json:"filterID,omitempty"`
+	MinimumGranularity *string           `json:"minimumGranularity,omitempty"`
+	ParameterName      *string           `json:"parameterName,omitempty"`
+	TimeGranularity    *string           `json:"timeGranularity,omitempty"`
 }
 
 // A transform operation that renames a column.
@@ -1940,7 +3098,14 @@ type ResourcePermission struct {
 
 // The rolling date configuration of a date time filter.
 type RollingDateConfiguration struct {
-	Expression *string `json:"expression,omitempty"`
+	DataSetIdentifier *string `json:"dataSetIdentifier,omitempty"`
+	Expression        *string `json:"expression,omitempty"`
+}
+
+// Determines the row alternate color options.
+type RowAlternateColorOptions struct {
+	Status                    *string `json:"status,omitempty"`
+	UsePrimaryBackgroundColor *string `json:"usePrimaryBackgroundColor,omitempty"`
 }
 
 // Information about rows for a data set SPICE ingestion.
@@ -1994,6 +3159,15 @@ type RowLevelPermissionTagRule struct {
 	TagMultiValueDelimiter *string `json:"tagMultiValueDelimiter,omitempty"`
 }
 
+// An optional structure that contains the Amazon S3 bucket configuration that
+// the generated snapshots are stored in. If you don't provide this information,
+// generated snapshots are stored in the default Amazon Quick Sight bucket.
+type S3BucketConfiguration struct {
+	BucketName   *string `json:"bucketName,omitempty"`
+	BucketPrefix *string `json:"bucketPrefix,omitempty"`
+	BucketRegion *string `json:"bucketRegion,omitempty"`
+}
+
 // The parameters that are required to connect to a S3 Knowledge Base data source.
 type S3KnowledgeBaseParameters struct {
 	BucketURL             *string `json:"bucketURL,omitempty"`
@@ -2041,14 +3215,43 @@ type SaaSTable struct {
 	TablePath     []*TablePathElement `json:"tablePath,omitempty"`
 }
 
+// A sankey diagram.
+//
+// For more information, see Using Sankey diagrams (https://docs.aws.amazon.com/quicksight/latest/user/sankey-diagram.html)
+// in the Amazon Quick Suite User Guide.
+type SankeyDiagramVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
+// A scatter plot.
+//
+// For more information, see Using scatter plots (https://docs.aws.amazon.com/quicksight/latest/user/scatter-plot.html)
+// in the Amazon Quick Suite User Guide.
+type ScatterPlotVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
 // The schedules configuration for an embedded Quick Sight dashboard.
 type SchedulesConfigurations struct {
 	Enabled *bool `json:"enabled,omitempty"`
 }
 
+// The visual display options for a data zoom scroll bar.
+type ScrollBarOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
 // A structure that contains the filter information when searching flows.
 type SearchFlowsFilter struct {
 	Value *string `json:"value,omitempty"`
+}
+
+// The options that determine the presentation of the secondary value of a KPI
+// visual.
+type SecondaryValueOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
 }
 
 // Details of a self-upgrade request.
@@ -2074,6 +3277,14 @@ type SemanticTable struct {
 	RowLevelPermissionConfiguration *RowLevelPermissionConfiguration `json:"rowLevelPermissionConfiguration,omitempty"`
 }
 
+// A structure that represents a semantic type.
+type SemanticType struct {
+	FalseyCellValue         *string   `json:"falseyCellValue,omitempty"`
+	FalseyCellValueSynonyms []*string `json:"falseyCellValueSynonyms,omitempty"`
+	TruthyCellValue         *string   `json:"truthyCellValue,omitempty"`
+	TruthyCellValueSynonyms []*string `json:"truthyCellValueSynonyms,omitempty"`
+}
+
 // The parameters for ServiceNow.
 type ServiceNowParameters struct {
 	SiteBaseURL *string `json:"siteBaseURL,omitempty"`
@@ -2085,9 +3296,30 @@ type SessionTag struct {
 	Value *string `json:"value,omitempty"`
 }
 
+// The configuration of adding parameters in action.
+type SetParameterValueConfiguration struct {
+	DestinationParameterName *string `json:"destinationParameterName,omitempty"`
+	// The configuration of destination parameter values.
+	//
+	// This is a union type structure. For this structure to be valid, only one
+	// of the attributes can be defined.
+	Value *DestinationParameterValueConfiguration `json:"value,omitempty"`
+}
+
 // The shared view settings of an embedded dashboard.
 type SharedViewConfigurations struct {
 	Enabled *bool `json:"enabled,omitempty"`
+}
+
+// A sheet, which is an object that contains a set of visuals that are viewed
+// together on one page in Quick Sight. Every analysis and dashboard contains
+// at least one sheet. Each sheet contains at least one visualization widget,
+// for example a chart, pivot table, or narrative insight. Sheets can be associated
+// with other components, such as controls, filters, and so on.
+type Sheet struct {
+	Images  []*SheetImage `json:"images,omitempty"`
+	Name    *string       `json:"name,omitempty"`
+	SheetID *string       `json:"sheetID,omitempty"`
 }
 
 // The background configuration for sheets.
@@ -2095,9 +3327,86 @@ type SheetBackgroundStyle struct {
 	Gradient *string `json:"gradient,omitempty"`
 }
 
+// A control to display info icons for filters and parameters.
+type SheetControlInfoIconLabelOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// A sheet is an object that contains a set of visuals that are viewed together
+// on one page in a paginated report. Every analysis and dashboard must contain
+// at least one sheet.
+type SheetDefinition struct {
+	Images  []*SheetImage `json:"images,omitempty"`
+	Name    *string       `json:"name,omitempty"`
+	SheetID *string       `json:"sheetID,omitempty"`
+}
+
+// The override configuration of the rendering rules of a sheet.
+type SheetElementConfigurationOverrides struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
 // The rendering rules of a sheet that uses a free-form layout.
 type SheetElementRenderingRule struct {
 	Expression *string `json:"expression,omitempty"`
+}
+
+// An image that is located on a sheet.
+type SheetImage struct {
+	Actions             []*ImageCustomAction `json:"actions,omitempty"`
+	ImageContentAltText *string              `json:"imageContentAltText,omitempty"`
+	// The general image interactions setup for image publish options.
+	Interactions *ImageInteractionOptions `json:"interactions,omitempty"`
+	// Determines how the image is scaled
+	Scaling      *SheetImageScalingConfiguration `json:"scaling,omitempty"`
+	SheetImageID *string                         `json:"sheetImageID,omitempty"`
+	// The source of the image.
+	Source *SheetImageSource `json:"source,omitempty"`
+	// The tooltip configuration for a sheet image.
+	Tooltip *SheetImageTooltipConfiguration `json:"tooltip,omitempty"`
+}
+
+// Determines how the image is scaled
+type SheetImageScalingConfiguration struct {
+	ScalingType *string `json:"scalingType,omitempty"`
+}
+
+// The source of the image.
+type SheetImageSource struct {
+	// The source of the static file that contains the image.
+	SheetImageStaticFileSource *SheetImageStaticFileSource `json:"sheetImageStaticFileSource,omitempty"`
+}
+
+// The source of the static file that contains the image.
+type SheetImageStaticFileSource struct {
+	StaticFileID *string `json:"staticFileID,omitempty"`
+}
+
+// The tooltip configuration for a sheet image.
+type SheetImageTooltipConfiguration struct {
+	// The text that appears in the sheet image tooltip.
+	TooltipText *SheetImageTooltipText `json:"tooltipText,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
+}
+
+// The text that appears in the sheet image tooltip.
+type SheetImageTooltipText struct {
+	PlainText *string `json:"plainText,omitempty"`
+}
+
+// The sheet layout maximization options of a dashbaord.
+type SheetLayoutElementMaximizationOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// A text box.
+type SheetTextBox struct {
+	SheetTextBoxID *string `json:"sheetTextBoxID,omitempty"`
+}
+
+// The filter that is applied to the options.
+type SheetVisualScopingConfiguration struct {
+	SheetID *string `json:"sheetID,omitempty"`
 }
 
 // A SignupResponse object that contains a summary of a newly created account.
@@ -2106,6 +3415,18 @@ type SignupResponse struct {
 	DirectoryType *string `json:"directoryType,omitempty"`
 	IAMUser       *bool   `json:"iamUser,omitempty"`
 	UserLoginName *string `json:"userLoginName,omitempty"`
+}
+
+// Describes the configuration of the dashboard snapshot.
+type SnapshotConfiguration struct {
+	// A list of Quick Sight parameters and the list's override values.
+	Parameters *Parameters `json:"parameters,omitempty"`
+}
+
+// A structure that contains information that identifies the snapshot that needs
+// to be generated.
+type SnapshotFileSheetSelection struct {
+	SheetID *string `json:"sheetID,omitempty"`
 }
 
 // An object that contains information on the error that caused the snapshot
@@ -2149,6 +3470,11 @@ type SourceTable struct {
 type SparkParameters struct {
 	Host *string `json:"host,omitempty"`
 	Port *int64  `json:"port,omitempty"`
+}
+
+// A static file that contains the geospatial data.
+type SpatialStaticFile struct {
+	StaticFileID *string `json:"staticFileID,omitempty"`
 }
 
 // The parameters that are required to connect to a Starburst data source.
@@ -2199,9 +3525,32 @@ type StringDatasetParameterDefaultValues struct {
 	StaticValues []*string `json:"staticValues,omitempty"`
 }
 
+// The default values of the StringParameterDeclaration.
+type StringDefaultValues struct {
+	StaticValues []*string `json:"staticValues,omitempty"`
+}
+
+// A string parameter.
+type StringParameter struct {
+	Name   *string   `json:"name,omitempty"`
+	Values []*string `json:"values,omitempty"`
+}
+
+// A parameter declaration for the String data type.
+type StringParameterDeclaration struct {
+	Name *string `json:"name,omitempty"`
+}
+
+// The configuration that defines the default value of a String parameter when
+// a value has not been set.
+type StringValueWhenUnsetConfiguration struct {
+	CustomValue *string `json:"customValue,omitempty"`
+}
+
 // The subtotal options.
 type SubtotalOptions struct {
-	CustomLabel *string `json:"customLabel,omitempty"`
+	CustomLabel      *string `json:"customLabel,omitempty"`
+	TotalsVisibility *string `json:"totalsVisibility,omitempty"`
 }
 
 // A success entry that occurs when a KeyRegistration job is successfully applied
@@ -2211,10 +3560,37 @@ type SuccessfulKeyRegistrationEntry struct {
 	StatusCode *int64  `json:"statusCode,omitempty"`
 }
 
+// The cell conditional formatting option for a table.
+type TableCellConditionalFormatting struct {
+	FieldID *string `json:"fieldID,omitempty"`
+}
+
+// The table cell style for a cell in pivot table or table visual.
+type TableCellStyle struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
 // The custom text content (value, font configuration) for the table link content
 // configuration.
 type TableFieldCustomTextContent struct {
 	Value *string `json:"value,omitempty"`
+}
+
+// The link configuration of a table field URL.
+type TableFieldLinkConfiguration struct {
+	Target *string `json:"target,omitempty"`
+}
+
+// The options for a table field.
+type TableFieldOption struct {
+	FieldID    *string `json:"fieldID,omitempty"`
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The paginated report options for a table visual.
+type TablePaginatedReportOptions struct {
+	OverflowColumnHeaderVisibility *string `json:"overflowColumnHeaderVisibility,omitempty"`
+	VerticalOverflowVisibility     *string `json:"verticalOverflowVisibility,omitempty"`
 }
 
 // An element in the hierarchical path to a table within a data source, containing
@@ -2222,6 +3598,15 @@ type TableFieldCustomTextContent struct {
 type TablePathElement struct {
 	ID   *string `json:"id,omitempty"`
 	Name *string `json:"name,omitempty"`
+}
+
+// A table visual.
+//
+// For more information, see Using tables as visuals (https://docs.aws.amazon.com/quicksight/latest/user/tabular.html)
+// in the Amazon Quick Suite User Guide.
+type TableVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
 }
 
 // The key or keys of the key-value pairs for the resource tag or tags assigned
@@ -2251,6 +3636,7 @@ type Template struct {
 	ARN             *string      `json:"arn,omitempty"`
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
 	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	TemplateID      *string      `json:"templateID,omitempty"`
 }
 
 // The template alias.
@@ -2258,9 +3644,16 @@ type TemplateAlias struct {
 	ARN *string `json:"arn,omitempty"`
 }
 
+// List of errors that occurred when the template version creation failed.
+type TemplateError struct {
+	Message          *string   `json:"message,omitempty"`
+	ViolatedEntities []*Entity `json:"violatedEntities,omitempty"`
+}
+
 // The source analysis of the template.
 type TemplateSourceAnalysis struct {
-	ARN *string `json:"arn,omitempty"`
+	ARN               *string             `json:"arn,omitempty"`
+	DataSetReferences []*DataSetReference `json:"dataSetReferences,omitempty"`
 }
 
 // The source template of the template.
@@ -2273,11 +3666,13 @@ type TemplateSummary struct {
 	ARN             *string      `json:"arn,omitempty"`
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
 	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	TemplateID      *string      `json:"templateID,omitempty"`
 }
 
 // A version of a template.
 type TemplateVersion struct {
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
+	Sheets          []*Sheet     `json:"sheets,omitempty"`
 	SourceEntityARN *string      `json:"sourceEntityARN,omitempty"`
 	Status          *string      `json:"status,omitempty"`
 	ThemeARN        *string      `json:"themeARN,omitempty"`
@@ -2297,11 +3692,22 @@ type TeradataParameters struct {
 	Port     *int64  `json:"port,omitempty"`
 }
 
+// The menu options for the interactions of a textbox.
+type TextBoxMenuOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// The configuration of the placeholder options in a text control.
+type TextControlPlaceholderOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
 // Summary information about a theme.
 type Theme struct {
 	ARN             *string      `json:"arn,omitempty"`
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
 	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	ThemeID         *string      `json:"themeID,omitempty"`
 }
 
 // An alias for a theme.
@@ -2309,16 +3715,23 @@ type ThemeAlias struct {
 	ARN *string `json:"arn,omitempty"`
 }
 
+// Theme error.
+type ThemeError struct {
+	Message *string `json:"message,omitempty"`
+}
+
 // The theme summary.
 type ThemeSummary struct {
 	ARN             *string      `json:"arn,omitempty"`
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
 	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	ThemeID         *string      `json:"themeID,omitempty"`
 }
 
 // A version of a theme.
 type ThemeVersion struct {
 	ARN         *string      `json:"arn,omitempty"`
+	BaseThemeID *string      `json:"baseThemeID,omitempty"`
 	CreatedTime *metav1.Time `json:"createdTime,omitempty"`
 	Status      *string      `json:"status,omitempty"`
 }
@@ -2330,6 +3743,11 @@ type ThemeVersionSummary struct {
 	Status      *string      `json:"status,omitempty"`
 }
 
+// The options that determine the thousands separator configuration.
+type ThousandSeparatorOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
 // The threshold alerts configuration for an embedded Quick Sight dashboard.
 type ThresholdAlertsConfigurations struct {
 	Enabled *bool `json:"enabled,omitempty"`
@@ -2337,22 +3755,31 @@ type ThresholdAlertsConfigurations struct {
 
 // A TimeEqualityFilter filters values that are equal to a given value.
 type TimeEqualityFilter struct {
-	TimeGranularity *string      `json:"timeGranularity,omitempty"`
-	Value           *metav1.Time `json:"value,omitempty"`
+	// A column of a data set.
+	Column          *ColumnIdentifier `json:"column,omitempty"`
+	FilterID        *string           `json:"filterID,omitempty"`
+	ParameterName   *string           `json:"parameterName,omitempty"`
+	TimeGranularity *string           `json:"timeGranularity,omitempty"`
+	Value           *metav1.Time      `json:"value,omitempty"`
 }
 
 // The time range drill down filter.
 type TimeRangeDrillDownFilter struct {
-	RangeMaximum    *metav1.Time `json:"rangeMaximum,omitempty"`
-	RangeMinimum    *metav1.Time `json:"rangeMinimum,omitempty"`
-	TimeGranularity *string      `json:"timeGranularity,omitempty"`
+	// A column of a data set.
+	Column          *ColumnIdentifier `json:"column,omitempty"`
+	RangeMaximum    *metav1.Time      `json:"rangeMaximum,omitempty"`
+	RangeMinimum    *metav1.Time      `json:"rangeMinimum,omitempty"`
+	TimeGranularity *string           `json:"timeGranularity,omitempty"`
 }
 
 // A TimeRangeFilter filters values that are between two specified values.
 type TimeRangeFilter struct {
-	IncludeMaximum  *bool   `json:"includeMaximum,omitempty"`
-	IncludeMinimum  *bool   `json:"includeMinimum,omitempty"`
-	TimeGranularity *string `json:"timeGranularity,omitempty"`
+	// A column of a data set.
+	Column          *ColumnIdentifier `json:"column,omitempty"`
+	FilterID        *string           `json:"filterID,omitempty"`
+	IncludeMaximum  *bool             `json:"includeMaximum,omitempty"`
+	IncludeMinimum  *bool             `json:"includeMinimum,omitempty"`
+	TimeGranularity *string           `json:"timeGranularity,omitempty"`
 }
 
 // The value of a time range filter.
@@ -2360,22 +3787,34 @@ type TimeRangeFilter struct {
 // This is a union type structure. For this structure to be valid, only one
 // of the attributes can be defined.
 type TimeRangeFilterValue struct {
+	Parameter   *string      `json:"parameter,omitempty"`
 	StaticValue *metav1.Time `json:"staticValue,omitempty"`
+}
+
+// The display options for the visual tooltip.
+type TooltipOptions struct {
+	TooltipVisibility *string `json:"tooltipVisibility,omitempty"`
 }
 
 // A TopBottomFilter filters values that are at the top or the bottom.
 type TopBottomFilter struct {
-	TimeGranularity *string `json:"timeGranularity,omitempty"`
+	// A column of a data set.
+	Column          *ColumnIdentifier `json:"column,omitempty"`
+	FilterID        *string           `json:"filterID,omitempty"`
+	ParameterName   *string           `json:"parameterName,omitempty"`
+	TimeGranularity *string           `json:"timeGranularity,omitempty"`
 }
 
 // The top movers and bottom movers computation setup.
 type TopBottomMoversComputation struct {
-	Name *string `json:"name,omitempty"`
+	ComputationID *string `json:"computationID,omitempty"`
+	Name          *string `json:"name,omitempty"`
 }
 
 // The top ranked and bottom ranked computation configuration.
 type TopBottomRankedComputation struct {
-	Name *string `json:"name,omitempty"`
+	ComputationID *string `json:"computationID,omitempty"`
+	Name          *string `json:"name,omitempty"`
 }
 
 // A structure that represents a calculated field.
@@ -2467,12 +3906,19 @@ type TopicSummary struct {
 
 // The total aggregation computation configuration.
 type TotalAggregationComputation struct {
-	Name *string `json:"name,omitempty"`
+	ComputationID *string `json:"computationID,omitempty"`
+	Name          *string `json:"name,omitempty"`
+}
+
+// The total aggregation settings map of a field id.
+type TotalAggregationOption struct {
+	FieldID *string `json:"fieldID,omitempty"`
 }
 
 // The total options for a table visual.
 type TotalOptions struct {
-	CustomLabel *string `json:"customLabel,omitempty"`
+	CustomLabel      *string `json:"customLabel,omitempty"`
+	TotalsVisibility *string `json:"totalsVisibility,omitempty"`
 }
 
 // A data transformation on a logical table. This is a variant type structure.
@@ -2539,6 +3985,20 @@ type TransformStep struct {
 	UnpivotStep *UnpivotOperation `json:"unpivotStep,omitempty"`
 }
 
+// A tree map.
+//
+// For more information, see Using tree maps (https://docs.aws.amazon.com/quicksight/latest/user/tree-map.html)
+// in the Amazon Quick Suite User Guide.
+type TreeMapVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
+}
+
+// The options that determine the presentation of trend arrows in a KPI visual.
+type TrendArrowOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
 // The parameters that are required to connect to a Trino data source.
 type TrinoParameters struct {
 	Catalog *string `json:"catalog,omitempty"`
@@ -2552,6 +4012,13 @@ type TwitterParameters struct {
 	Query   *string `json:"query,omitempty"`
 }
 
+// The unaggregated field for a table.
+type UnaggregatedField struct {
+	// A column of a data set.
+	Column  *ColumnIdentifier `json:"column,omitempty"`
+	FieldID *string           `json:"fieldID,omitempty"`
+}
+
 // A UniqueKey configuration that references a dataset column.
 type UniqueKey struct {
 	ColumnNames []*string `json:"columnNames,omitempty"`
@@ -2559,7 +4026,8 @@ type UniqueKey struct {
 
 // The unique values computation configuration.
 type UniqueValuesComputation struct {
-	Name *string `json:"name,omitempty"`
+	ComputationID *string `json:"computationID,omitempty"`
+	Name          *string `json:"name,omitempty"`
 }
 
 // A transform operation that converts columns into rows, normalizing the data
@@ -2605,7 +4073,9 @@ type User struct {
 
 // A structure that contains information to identify a user.
 type UserIdentifier struct {
-	UserARN *string `json:"userARN,omitempty"`
+	Email    *string `json:"email,omitempty"`
+	UserARN  *string `json:"userARN,omitempty"`
+	UserName *string `json:"userName,omitempty"`
 }
 
 // The structure of a VPC connection.
@@ -2633,6 +4103,13 @@ type VPCConnectionSummary struct {
 	VPCID           *string      `json:"vpcID,omitempty"`
 }
 
+// The option to relax the validation that is required to create and update
+// analyses, dashboards, and templates with definition objects. When you set
+// this value to LENIENT, validation is skipped for specific errors.
+type ValidationStrategy struct {
+	Mode *string `json:"mode,omitempty"`
+}
+
 // Configuration for how to handle value columns in pivot operations, including
 // aggregation settings.
 type ValueColumnConfiguration struct {
@@ -2641,9 +4118,61 @@ type ValueColumnConfiguration struct {
 	AggregationFunction *DataPrepAggregationFunction `json:"aggregationFunction,omitempty"`
 }
 
+// The axis sort options for a visual.
+type VisualAxisSortOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// A custom action defined on a visual.
+type VisualCustomAction struct {
+	CustomActionID *string `json:"customActionID,omitempty"`
+	Status         *string `json:"status,omitempty"`
+}
+
+// The operation that is defined by the custom action.
+//
+// This is a union type structure. For this structure to be valid, only one
+// of the attributes can be defined.
+type VisualCustomActionOperation struct {
+	// The navigation operation that navigates between different sheets in the same
+	// analysis.
+	//
+	// This is a union type structure. For this structure to be valid, only one
+	// of the attributes can be defined.
+	NavigationOperation *CustomActionNavigationOperation `json:"navigationOperation,omitempty"`
+	// The set parameter operation that sets parameters in custom action.
+	SetParametersOperation *CustomActionSetParametersOperation `json:"setParametersOperation,omitempty"`
+	// The URL operation that opens a link to another webpage.
+	URLOperation *CustomActionURLOperation `json:"urlOperation,omitempty"`
+}
+
+// The menu options for a visual.
+type VisualMenuOption struct {
+	AvailabilityStatus *string `json:"availabilityStatus,omitempty"`
+}
+
+// The subtitle label options for a visual.
+type VisualSubtitleLabelOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
+// The title label options for a visual.
+type VisualTitleLabelOptions struct {
+	Visibility *string `json:"visibility,omitempty"`
+}
+
 // The options that determine the presentation of a waterfall visual.
 type WaterfallChartOptions struct {
 	TotalBarLabel *string `json:"totalBarLabel,omitempty"`
+}
+
+// A waterfall chart.
+//
+// For more information, see Using waterfall charts (https://docs.aws.amazon.com/quicksight/latest/user/waterfall-chart.html)
+// in the Amazon Quick Suite User Guide.
+type WaterfallVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
 }
 
 // The parameters for a web crawler data source.
@@ -2673,4 +4202,13 @@ type WhatIfPointScenario struct {
 type WhatIfRangeScenario struct {
 	EndDate   *metav1.Time `json:"endDate,omitempty"`
 	StartDate *metav1.Time `json:"startDate,omitempty"`
+}
+
+// A word cloud.
+//
+// For more information, see Using word clouds (https://docs.aws.amazon.com/quicksight/latest/user/word-cloud.html)
+// in the Amazon Quick Suite User Guide.
+type WordCloudVisual struct {
+	VisualContentAltText *string `json:"visualContentAltText,omitempty"`
+	VisualID             *string `json:"visualID,omitempty"`
 }
