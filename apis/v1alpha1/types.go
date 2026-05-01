@@ -941,24 +941,59 @@ type CustomValuesConfiguration struct {
 	IncludeNullValue *bool                  `json:"includeNullValue,omitempty"`
 }
 
-// Dashboard.
-type Dashboard struct {
-	ARN               *string      `json:"arn,omitempty"`
-	CreatedTime       *metav1.Time `json:"createdTime,omitempty"`
-	DashboardID       *string      `json:"dashboardID,omitempty"`
-	LastPublishedTime *metav1.Time `json:"lastPublishedTime,omitempty"`
-	LastUpdatedTime   *metav1.Time `json:"lastUpdatedTime,omitempty"`
-}
-
 // Dashboard error.
 type DashboardError struct {
 	Message          *string   `json:"message,omitempty"`
+	Type             *string   `json:"type_,omitempty"`
 	ViolatedEntities []*Entity `json:"violatedEntities,omitempty"`
+}
+
+// Dashboard publish options.
+type DashboardPublishOptions struct {
+	// An ad hoc (one-time) filtering option.
+	AdHocFilteringOption *AdHocFilteringOption `json:"adHocFilteringOption,omitempty"`
+	// The drill down options for data points in a dashbaord.
+	DataPointDrillUpDownOption *DataPointDrillUpDownOption `json:"dataPointDrillUpDownOption,omitempty"`
+	// The data point menu options of a dashboard.
+	DataPointMenuLabelOption *DataPointMenuLabelOption `json:"dataPointMenuLabelOption,omitempty"`
+	// The data point tooltip options.
+	DataPointTooltipOption *DataPointTooltipOption `json:"dataPointTooltipOption,omitempty"`
+	// Adds Q&A capabilities to a dashboard. If no topic is linked, Dashboard Q&A
+	// uses the data values that are rendered on the dashboard. End users can use
+	// Dashboard Q&A to ask for different slices of the data that they see on the
+	// dashboard. If a topic is linked, Topic Q&A is enabled.
+	DataQAEnabledOption *DataQAEnabledOption `json:"dataQAEnabledOption,omitempty"`
+	// Executive summary option.
+	DataStoriesSharingOption *DataStoriesSharingOption `json:"dataStoriesSharingOption,omitempty"`
+	// Data stories sharing option.
+	ExecutiveSummaryOption *ExecutiveSummaryOption `json:"executiveSummaryOption,omitempty"`
+	// Export to .csv option.
+	ExportToCSVOption *ExportToCSVOption `json:"exportToCSVOption,omitempty"`
+	// Determines whether or not hidden fields are visible on exported dashbaords.
+	ExportWithHiddenFieldsOption *ExportWithHiddenFieldsOption `json:"exportWithHiddenFieldsOption,omitempty"`
+	// Determines if Actions in Amazon Quick Suite are enabled in a dashboard..
+	QuickSuiteActionsOption *QuickSuiteActionsOption `json:"quickSuiteActionsOption,omitempty"`
+	// Sheet controls option.
+	SheetControlsOption *SheetControlsOption `json:"sheetControlsOption,omitempty"`
+	// The sheet layout maximization options of a dashbaord.
+	SheetLayoutElementMaximizationOption *SheetLayoutElementMaximizationOption `json:"sheetLayoutElementMaximizationOption,omitempty"`
+	// The axis sort options for a visual.
+	VisualAxisSortOption *VisualAxisSortOption `json:"visualAxisSortOption,omitempty"`
+	// The menu options for a visual.
+	VisualMenuOption *VisualMenuOption `json:"visualMenuOption,omitempty"`
+	// The visual publish options of a visual in a dashboard
+	VisualPublishOptions *DashboardVisualPublishOptions `json:"visualPublishOptions,omitempty"`
 }
 
 // A filter that you apply when searching for dashboards.
 type DashboardSearchFilter struct {
 	Value *string `json:"value,omitempty"`
+}
+
+// Dashboard source entity.
+type DashboardSourceEntity struct {
+	// Dashboard source template.
+	SourceTemplate *DashboardSourceTemplate `json:"sourceTemplate,omitempty"`
 }
 
 // Dashboard source template.
@@ -969,30 +1004,37 @@ type DashboardSourceTemplate struct {
 
 // Dashboard summary.
 type DashboardSummary struct {
-	ARN               *string      `json:"arn,omitempty"`
-	CreatedTime       *metav1.Time `json:"createdTime,omitempty"`
-	DashboardID       *string      `json:"dashboardID,omitempty"`
-	LastPublishedTime *metav1.Time `json:"lastPublishedTime,omitempty"`
-	LastUpdatedTime   *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	ARN                    *string      `json:"arn,omitempty"`
+	CreatedTime            *metav1.Time `json:"createdTime,omitempty"`
+	DashboardID            *string      `json:"dashboardID,omitempty"`
+	LastPublishedTime      *metav1.Time `json:"lastPublishedTime,omitempty"`
+	LastUpdatedTime        *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	Name                   *string      `json:"name,omitempty"`
+	PublishedVersionNumber *int64       `json:"publishedVersionNumber,omitempty"`
 }
 
 // Dashboard version.
 type DashboardVersion struct {
-	ARN             *string      `json:"arn,omitempty"`
-	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
-	DataSetARNs     []*string    `json:"dataSetARNs,omitempty"`
-	Sheets          []*Sheet     `json:"sheets,omitempty"`
-	SourceEntityARN *string      `json:"sourceEntityARN,omitempty"`
-	Status          *string      `json:"status,omitempty"`
-	ThemeARN        *string      `json:"themeARN,omitempty"`
+	ARN             *string           `json:"arn,omitempty"`
+	CreatedTime     *metav1.Time      `json:"createdTime,omitempty"`
+	DataSetARNs     []*string         `json:"dataSetARNs,omitempty"`
+	Description     *string           `json:"description,omitempty"`
+	Errors          []*DashboardError `json:"errors,omitempty"`
+	Sheets          []*Sheet          `json:"sheets,omitempty"`
+	SourceEntityARN *string           `json:"sourceEntityARN,omitempty"`
+	Status          *string           `json:"status,omitempty"`
+	ThemeARN        *string           `json:"themeARN,omitempty"`
+	VersionNumber   *int64            `json:"versionNumber,omitempty"`
 }
 
 // Dashboard version summary.
 type DashboardVersionSummary struct {
 	ARN             *string      `json:"arn,omitempty"`
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
+	Description     *string      `json:"description,omitempty"`
 	SourceEntityARN *string      `json:"sourceEntityARN,omitempty"`
 	Status          *string      `json:"status,omitempty"`
+	VersionNumber   *int64       `json:"versionNumber,omitempty"`
 }
 
 // A structure that contains the following elements:
@@ -1014,12 +1056,32 @@ type DashboardVisualID struct {
 	VisualID    *string `json:"visualID,omitempty"`
 }
 
+// The visual publish options of a visual in a dashboard
+type DashboardVisualPublishOptions struct {
+	// Determines if hidden fields are included in an exported dashboard.
+	ExportHiddenFieldsOption *ExportHiddenFieldsOption `json:"exportHiddenFieldsOption,omitempty"`
+}
+
 // The QA result that is made from dashboard visual.
 type DashboardVisualResult struct {
-	DashboardID *string `json:"dashboardID,omitempty"`
-	SheetID     *string `json:"sheetID,omitempty"`
-	SheetName   *string `json:"sheetName,omitempty"`
-	VisualID    *string `json:"visualID,omitempty"`
+	DashboardID   *string `json:"dashboardID,omitempty"`
+	DashboardName *string `json:"dashboardName,omitempty"`
+	SheetID       *string `json:"sheetID,omitempty"`
+	SheetName     *string `json:"sheetName,omitempty"`
+	VisualID      *string `json:"visualID,omitempty"`
+}
+
+// Dashboard.
+type Dashboard_SDK struct {
+	ARN               *string      `json:"arn,omitempty"`
+	CreatedTime       *metav1.Time `json:"createdTime,omitempty"`
+	DashboardID       *string      `json:"dashboardID,omitempty"`
+	LastPublishedTime *metav1.Time `json:"lastPublishedTime,omitempty"`
+	LastUpdatedTime   *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	LinkEntities      []*string    `json:"linkEntities,omitempty"`
+	Name              *string      `json:"name,omitempty"`
+	// Dashboard version.
+	Version *DashboardVersion `json:"version,omitempty"`
 }
 
 // The options for data bars.
@@ -3332,6 +3394,11 @@ type SheetControlInfoIconLabelOptions struct {
 	Visibility *string `json:"visibility,omitempty"`
 }
 
+// Sheet controls option.
+type SheetControlsOption struct {
+	VisibilityState *string `json:"visibilityState,omitempty"`
+}
+
 // A sheet is an object that contains a set of visuals that are viewed together
 // on one page in a paginated report. Every analysis and dashboard must contain
 // at least one sheet.
@@ -3641,7 +3708,9 @@ type Template struct {
 
 // The template alias.
 type TemplateAlias struct {
-	ARN *string `json:"arn,omitempty"`
+	AliasName             *string `json:"aliasName,omitempty"`
+	ARN                   *string `json:"arn,omitempty"`
+	TemplateVersionNumber *int64  `json:"templateVersionNumber,omitempty"`
 }
 
 // List of errors that occurred when the template version creation failed.
@@ -3663,26 +3732,31 @@ type TemplateSourceTemplate struct {
 
 // The template summary.
 type TemplateSummary struct {
-	ARN             *string      `json:"arn,omitempty"`
-	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
-	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
-	TemplateID      *string      `json:"templateID,omitempty"`
+	ARN                 *string      `json:"arn,omitempty"`
+	CreatedTime         *metav1.Time `json:"createdTime,omitempty"`
+	LastUpdatedTime     *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	LatestVersionNumber *int64       `json:"latestVersionNumber,omitempty"`
+	TemplateID          *string      `json:"templateID,omitempty"`
 }
 
 // A version of a template.
 type TemplateVersion struct {
 	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
+	Description     *string      `json:"description,omitempty"`
 	Sheets          []*Sheet     `json:"sheets,omitempty"`
 	SourceEntityARN *string      `json:"sourceEntityARN,omitempty"`
 	Status          *string      `json:"status,omitempty"`
 	ThemeARN        *string      `json:"themeARN,omitempty"`
+	VersionNumber   *int64       `json:"versionNumber,omitempty"`
 }
 
 // The template version.
 type TemplateVersionSummary struct {
-	ARN         *string      `json:"arn,omitempty"`
-	CreatedTime *metav1.Time `json:"createdTime,omitempty"`
-	Status      *string      `json:"status,omitempty"`
+	ARN           *string      `json:"arn,omitempty"`
+	CreatedTime   *metav1.Time `json:"createdTime,omitempty"`
+	Description   *string      `json:"description,omitempty"`
+	Status        *string      `json:"status,omitempty"`
+	VersionNumber *int64       `json:"versionNumber,omitempty"`
 }
 
 // The parameters for Teradata.
@@ -3712,7 +3786,9 @@ type Theme struct {
 
 // An alias for a theme.
 type ThemeAlias struct {
-	ARN *string `json:"arn,omitempty"`
+	AliasName          *string `json:"aliasName,omitempty"`
+	ARN                *string `json:"arn,omitempty"`
+	ThemeVersionNumber *int64  `json:"themeVersionNumber,omitempty"`
 }
 
 // Theme error.
@@ -3722,25 +3798,30 @@ type ThemeError struct {
 
 // The theme summary.
 type ThemeSummary struct {
-	ARN             *string      `json:"arn,omitempty"`
-	CreatedTime     *metav1.Time `json:"createdTime,omitempty"`
-	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
-	ThemeID         *string      `json:"themeID,omitempty"`
+	ARN                 *string      `json:"arn,omitempty"`
+	CreatedTime         *metav1.Time `json:"createdTime,omitempty"`
+	LastUpdatedTime     *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	LatestVersionNumber *int64       `json:"latestVersionNumber,omitempty"`
+	ThemeID             *string      `json:"themeID,omitempty"`
 }
 
 // A version of a theme.
 type ThemeVersion struct {
-	ARN         *string      `json:"arn,omitempty"`
-	BaseThemeID *string      `json:"baseThemeID,omitempty"`
-	CreatedTime *metav1.Time `json:"createdTime,omitempty"`
-	Status      *string      `json:"status,omitempty"`
+	ARN           *string      `json:"arn,omitempty"`
+	BaseThemeID   *string      `json:"baseThemeID,omitempty"`
+	CreatedTime   *metav1.Time `json:"createdTime,omitempty"`
+	Description   *string      `json:"description,omitempty"`
+	Status        *string      `json:"status,omitempty"`
+	VersionNumber *int64       `json:"versionNumber,omitempty"`
 }
 
 // The theme version.
 type ThemeVersionSummary struct {
-	ARN         *string      `json:"arn,omitempty"`
-	CreatedTime *metav1.Time `json:"createdTime,omitempty"`
-	Status      *string      `json:"status,omitempty"`
+	ARN           *string      `json:"arn,omitempty"`
+	CreatedTime   *metav1.Time `json:"createdTime,omitempty"`
+	Description   *string      `json:"description,omitempty"`
+	Status        *string      `json:"status,omitempty"`
+	VersionNumber *int64       `json:"versionNumber,omitempty"`
 }
 
 // The options that determine the thousands separator configuration.
@@ -4144,6 +4225,12 @@ type VisualCustomActionOperation struct {
 	SetParametersOperation *CustomActionSetParametersOperation `json:"setParametersOperation,omitempty"`
 	// The URL operation that opens a link to another webpage.
 	URLOperation *CustomActionURLOperation `json:"urlOperation,omitempty"`
+}
+
+// The general visual interactions setup for visual publish options
+type VisualInteractionOptions struct {
+	// The menu options for a visual.
+	VisualMenuOption *VisualMenuOption `json:"visualMenuOption,omitempty"`
 }
 
 // The menu options for a visual.

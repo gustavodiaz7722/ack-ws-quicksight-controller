@@ -1,0 +1,17 @@
+apiVersion: quicksight.services.k8s.aws/v1alpha1
+kind: Dashboard
+metadata:
+  name: $DASHBOARD_NAME
+spec:
+  awsAccountID: "$AWS_ACCOUNT_ID"
+  id: $DASHBOARD_ID
+  name: $DASHBOARD_NAME
+  sourceEntity:
+    sourceTemplate:
+      arn: $TEMPLATE_ARN
+      dataSetReferences:
+        - dataSetARN: $DATA_SET_ARN
+          dataSetPlaceholder: testDataSet
+  tags:
+    - key: environment
+      value: test

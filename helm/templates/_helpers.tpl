@@ -81,6 +81,7 @@ rules:
   - quicksight.services.k8s.aws
   resources:
   - analyses
+  - dashboards
   - datasets
   - datasources
   verbs:
@@ -95,6 +96,7 @@ rules:
   - quicksight.services.k8s.aws
   resources:
   - analyses/status
+  - dashboards/status
   - datasets/status
   - datasources/status
   verbs:

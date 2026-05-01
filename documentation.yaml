@@ -1,4 +1,13 @@
 resources:
+  Dashboard:
+    fields:
+      VersionStatus:
+        override: |
+          The resource status of the dashboard version. Possible values are
+          CREATION_IN_PROGRESS, CREATION_SUCCESSFUL, CREATION_FAILED,
+          UPDATE_IN_PROGRESS, UPDATE_SUCCESSFUL, UPDATE_FAILED, or DELETED.
+          The resource is considered synced when the status is
+          CREATION_SUCCESSFUL or UPDATE_SUCCESSFUL.
   DataSource:
     fields:
       Status:

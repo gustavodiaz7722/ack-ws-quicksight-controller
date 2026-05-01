@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - common
   - bases/quicksight.services.k8s.aws_analyses.yaml
+  - bases/quicksight.services.k8s.aws_dashboards.yaml
   - bases/quicksight.services.k8s.aws_datasets.yaml
   - bases/quicksight.services.k8s.aws_datasources.yaml

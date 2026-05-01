@@ -2,7 +2,6 @@ ignore:
   resource_names:
       - AccountCustomization
       - AccountSubscription
-      - Dashboard
       - Folder
       - FolderMembership
       - Group
@@ -33,6 +32,10 @@ ignore:
       - CreateAnalysisOutput.RequestId
       - UpdateAnalysisOutput.RequestId
       - DeleteAnalysisOutput.RequestId
+      - CreateDashboardOutput.RequestId
+      - UpdateDashboardOutput.RequestId
+      - DeleteDashboardOutput.RequestId
+      - DescribeDashboardOutput.RequestId
       # HTTP status codes are not useful for users
       - CreateDataSourceOutput.Status
       - UpdateDataSourceOutput.Status
@@ -46,6 +49,10 @@ ignore:
       - UpdateAnalysisOutput.Status
       - DeleteAnalysisOutput.Status
       - DescribeAnalysisOutput.Status
+      - CreateDashboardOutput.Status
+      - UpdateDashboardOutput.Status
+      - DeleteDashboardOutput.Status
+      - DescribeDashboardOutput.Status
       # RowLevelPermissionDataSet - deprecated
       - CreateDataSetInput.RowLevelPermissionDataSet
       - UpdateDataSetInput.RowLevelPermissionDataSet
@@ -63,6 +70,20 @@ ignore:
       # Remove support for inline definition and only support template definition. 
       - CreateAnalysisInput.Definition
       - UpdateAnalysisInput.Definition
+      # Dashboard Definition CRD size reduction - the Analysis CRD exceeds the
+      # Ignoring sheets and FilterGroups reduces size below limits
+      - CreateDashboardInput.Definition
+      - UpdateDashboardInput.Definition
+      # Do not send VersionNumber to DescribeDashboard. ack-generate auto-wires
+      # Status.VersionNumber to DescribeDashboardInput.VersionNumber because the
+      # field names match, but that makes the describe version-scoped and
+      # returns Dashboard.Arn with a /version/N suffix (which TagResource
+      # rejects as an invalid ARN). Always describe the latest published version.
+      - DescribeDashboardInput.VersionNumber
+      # Same auto-wiring issue applies to DeleteDashboard. Passing VersionNumber
+      # would delete only that version; AWS rejects deleting a published version
+      # with ConflictException. Always delete the dashboard in full.
+      - DeleteDashboardInput.VersionNumber
 
 operations:
   DescribeDataSource:
@@ -71,12 +92,125 @@ operations:
     output_wrapper_field_path: DataSet
   DescribeAnalysis:
     output_wrapper_field_path: Analysis
+  DescribeDashboard:
+    output_wrapper_field_path: Dashboard
 
 empty_shapes:
   - AxisDisplayDataDrivenRange
   - AllSheetsFilterScopeConfiguration
 
 resources:
+  Dashboard:
+    ignore_idempotency_token: true
+    synced:
+      when:
+        - path: Status.VersionStatus
+          in:
+            - CREATION_SUCCESSFUL
+            - UPDATE_SUCCESSFUL
+    renames:
+      operations:
+        CreateDashboard:
+          input_fields:
+            DashboardId: ID
+            DashboardPublishOptions: PublishOptions
+          output_fields:
+            DashboardId: ID
+        UpdateDashboard:
+          input_fields:
+            DashboardId: ID
+            DashboardPublishOptions: PublishOptions
+          output_fields:
+            DashboardId: ID
+        DeleteDashboard:
+          input_fields:
+            DashboardId: ID
+        DescribeDashboard:
+          input_fields:
+            DashboardId: ID
+    fields:
+      # Primary identifiers
+      ID:
+        is_primary_key: true
+        is_immutable: true
+      AwsAccountId:
+        is_immutable: true
+      # FolderARNs is create-only. After creation, folder membership is
+      # managed via CreateFolderMembership/DeleteFolderMembership on the
+      # folder side. DescribeDashboard does not return folder membership.
+      FolderARNs:
+        is_immutable: true
+      # Status fields from DescribeDashboard
+      # Flat scalar mirrors of the published Dashboard.Version so the
+      # synced sentinel can reference a scalar and we avoid a nested
+      # DashboardVersion struct in status. VersionStatus drives the
+      # synced-state check; VersionNumber is used by UpdateDashboardPublishedVersion.
+      VersionStatus:
+        is_read_only: true
+        from:
+          operation: DescribeDashboard
+          path: Dashboard.Version.Status
+      VersionNumber:
+        is_read_only: true
+        from:
+          operation: DescribeDashboard
+          path: Dashboard.Version.VersionNumber
+      CreatedTime:
+        is_read_only: true
+        from:
+          operation: DescribeDashboard
+          path: Dashboard.CreatedTime
+      LastPublishedTime:
+        is_read_only: true
+        from:
+          operation: DescribeDashboard
+          path: Dashboard.LastPublishedTime
+      LastUpdatedTime:
+        is_read_only: true
+        from:
+          operation: DescribeDashboard
+          path: Dashboard.LastUpdatedTime
+      # Cross-resource reference to DataSet for source template dataset placeholders
+      SourceEntity.SourceTemplate.DataSetReferences.DataSetARN:
+        references:
+          resource: DataSet
+          path: Status.ACKResourceMetadata.ARN
+      # Cross-resource reference to Analysis for linked entities
+      LinkEntities:
+        references:
+          resource: Analysis
+          path: Status.ACKResourceMetadata.ARN
+      # SourceEntity comparison is handled in the delta_post_compare hook
+      # because DescribeDashboard returns SourceEntityArn with a /version/N
+      # suffix that may not match the user-provided ARN.
+      SourceEntity:
+        compare:
+          is_ignored: true
+      # Permissions and LinkSharingConfiguration are managed via the
+      # separate UpdateDashboardPermissions API. Comparison and sync
+      # are handled in custom hooks.
+      Permissions:
+        compare:
+          is_ignored: true
+      LinkSharingConfiguration:
+        compare:
+          is_ignored: true
+    hooks:
+      sdk_update_pre_build_request:
+        template_path: hooks/dashboard/sdk_update_pre_build_request.go.tpl
+      sdk_update_post_set_output:
+        template_path: hooks/dashboard/sdk_update_post_set_output.go.tpl
+      sdk_read_one_post_set_output:
+        template_path: hooks/dashboard/sdk_read_one_post_set_output.go.tpl
+      delta_post_compare:
+        template_path: hooks/dashboard/delta_post_compare.go.tpl
+    exceptions:
+      errors:
+        404:
+          code: ResourceNotFoundException
+      terminal_codes:
+        - InvalidParameterValueException
+        - UnsupportedUserEditionException
   Analysis:
     ignore_idempotency_token: true
     synced:
