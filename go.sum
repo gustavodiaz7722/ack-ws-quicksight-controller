@@ -4,8 +4,8 @@ github.com/aws-controllers-k8s/iam-controller v1.6.1 h1:vRaUHxsXBl1/XVnoVMYXXjOn
 github.com/aws-controllers-k8s/iam-controller v1.6.1/go.mod h1:lLCewsvAPDWlz5qsnrGg+uaOFJaprHdk+0dgq8Z3S3Y=
 github.com/aws-controllers-k8s/rds-controller v1.7.6 h1:OBz9yAa8be9HGf0vBppSKrrcmty5ukmSV4u6GahmYvI=
 github.com/aws-controllers-k8s/rds-controller v1.7.6/go.mod h1:j86/Rp1dQ+r6/fcct/2lmzaWIKJr+Njo2V7EqLUwQpA=
-github.com/aws-controllers-k8s/runtime v0.59.1 h1:7UDKl9/dif8oNjxx/5Z5ciUfuyn86MS4BvoG9LqF6h4=
-github.com/aws-controllers-k8s/runtime v0.59.1/go.mod h1:ljWD1IdtVx/qC7C4lVobF4vLNhno/xX5A78BOke1Ksk=
+github.com/aws-controllers-k8s/runtime v0.59.2-0.20260617181621-38bd4c967a01 h1:1kdTtKwkVyw5KnOt9/5b0+e3OZ55EcwTTDw9AvfnKWU=
+github.com/aws-controllers-k8s/runtime v0.59.2-0.20260617181621-38bd4c967a01/go.mod h1:ljWD1IdtVx/qC7C4lVobF4vLNhno/xX5A78BOke1Ksk=
 github.com/aws-controllers-k8s/s3-controller v1.3.1 h1:ovSJLK2xtyz32S2aw6zY8xMwoqoh1/Mvyi+nD33uzS0=
 github.com/aws-controllers-k8s/s3-controller v1.3.1/go.mod h1:Cn5MQ8CYhi3nnro/Rt7FaFetl+1g2qIW1o7+nERCsaI=
 github.com/aws-controllers-k8s/secretsmanager-controller v1.2.1 h1:iV04N5ab0SPn5vVzPu/mGk+AFCT/7EyAD/pjFZmhPwE=
