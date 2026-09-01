@@ -140,6 +140,11 @@ resources:
       # folder side. DescribeDashboard does not return folder membership.
       FolderARNs:
         is_immutable: true
+      # Not an API field. Tracks the version this controller created and has yet
+      # to publish; see shouldPublishPending in pkg/resource/dashboard/hooks.go.
+      PendingPublishVersionNumber:
+        is_read_only: true
+        type: int64
       # Status fields from DescribeDashboard
       # Flat scalar mirrors of the published Dashboard.Version so the
       # synced sentinel can reference a scalar and we avoid a nested

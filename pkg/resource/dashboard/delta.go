@@ -316,9 +316,6 @@ func newResourceDelta(
 		}
 	}
 
-	if !equality.Semantic.DeepEqual(a.ko.Status.VersionNumber, b.ko.Status.VersionNumber) {
-		delta.Add("Status.VersionNumber", a.ko.Status.VersionNumber, b.ko.Status.VersionNumber)
-	}
 	// Custom SourceEntity comparison. The generated delta skips this field
 	// (compare.is_ignored) because DescribeDashboard returns SourceEntityArn
 	// with a /version/N suffix.

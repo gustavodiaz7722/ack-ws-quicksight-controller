@@ -8,6 +8,11 @@
 			var vn int64
 			if _, scanErr := fmt.Sscanf(parts[1], "%d", &vn); scanErr == nil {
 				ko.Status.VersionNumber = &vn
+				// This is the only writer of PendingPublishVersionNumber, which
+				// is what limits publishing to versions ACK created. Cleared
+				// once the version is published.
+				pending := vn
+				ko.Status.PendingPublishVersionNumber = &pending
 			}
 		}
 	}

@@ -5,15 +5,15 @@ go 1.25.0
 require (
 	github.com/aws-controllers-k8s/iam-controller v1.6.1
 	github.com/aws-controllers-k8s/rds-controller v1.7.6
-	github.com/aws-controllers-k8s/runtime v0.62.0
+	github.com/aws-controllers-k8s/runtime v0.63.0
 	github.com/aws-controllers-k8s/s3-controller v1.3.1
 	github.com/aws-controllers-k8s/secretsmanager-controller v1.2.1
-	github.com/aws/aws-sdk-go v1.55.8
 	github.com/aws/aws-sdk-go-v2 v1.41.1
 	github.com/aws/aws-sdk-go-v2/service/quicksight v1.101.0
 	github.com/aws/smithy-go v1.24.0
 	github.com/go-logr/logr v1.4.3
 	github.com/spf13/pflag v1.0.9
+	github.com/stretchr/testify v1.11.1
 	k8s.io/api v0.35.0
 	k8s.io/apimachinery v0.35.0
 	k8s.io/client-go v0.35.0
@@ -21,6 +21,7 @@ require (
 )
 
 require (
+	github.com/aws/aws-sdk-go v1.55.8 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.28.6 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.47 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.21 // indirect
