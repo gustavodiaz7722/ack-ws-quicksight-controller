@@ -496,6 +496,9 @@ spec:
                 description: The last time that this dashboard was updated.
                 format: date-time
                 type: string
+              pendingPublishVersionNumber:
+                format: int64
+                type: integer
               versionARN:
                 description: |-
                   The ARN of the dashboard, including the version number of the first version

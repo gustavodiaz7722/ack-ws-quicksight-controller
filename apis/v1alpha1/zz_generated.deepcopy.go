@@ -4008,6 +4008,11 @@ func (in *DashboardStatus) DeepCopyInto(out *DashboardStatus) {
 		in, out := &in.LastUpdatedTime, &out.LastUpdatedTime
 		*out = (*in).DeepCopy()
 	}
+	if in.PendingPublishVersionNumber != nil {
+		in, out := &in.PendingPublishVersionNumber, &out.PendingPublishVersionNumber
+		*out = new(int64)
+		**out = **in
+	}
 	if in.VersionARN != nil {
 		in, out := &in.VersionARN, &out.VersionARN
 		*out = new(string)

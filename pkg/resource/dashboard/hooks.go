@@ -31,6 +31,31 @@ import (
 var syncTags = sync.Tags
 var getTags = sync.GetTags
 
+// shouldPublishPending reports whether pending still needs promoting over
+// published.
+//
+// pending is Status.PendingPublishVersionNumber, the version this controller
+// created via UpdateDashboard. Publishing is deliberately restricted to those:
+// a dashboard can carry drafts made outside ACK, and adopting one published on
+// an older revision must leave them alone, so "newest unpublished version" is
+// not a safe rule.
+//
+// A dedicated field is needed because neither alternative can express a pending
+// version: ReadOne overwrites Status.VersionNumber with the published one, and
+// the runtime hands Update a copy carrying the observed status, making desired
+// and observed equal by construction. Generated sdkFind starts from a DeepCopy
+// of the resource it is handed, so the value survives to the reconcile that
+// publishes it.
+func shouldPublishPending(pending, published *int64) bool {
+	if pending == nil {
+		return false
+	}
+	if published == nil {
+		return true
+	}
+	return *pending > *published
+}
+
 // dashboardVersionReady calls DescribeDashboard for the given version number
 // and returns (true, status) if that version is in a terminal successful state
 // and can be published, or (false, status) otherwise.
@@ -54,16 +79,16 @@ func dashboardVersionReady(
 		return false, ""
 	}
 	status := string(resp.Dashboard.Version.Status)
-	ready := resp.Dashboard.Version.Status == svcsdktypes.ResourceStatusCreationSuccessful || resp.Dashboard.Version.Status == svcsdktypes.ResourceStatusUpdateSuccessful
+	ready := resp.Dashboard.Version.Status == svcsdktypes.ResourceStatusCreationSuccessful ||
+		resp.Dashboard.Version.Status == svcsdktypes.ResourceStatusUpdateSuccessful
 	return ready, status
 }
 
 // requeueWaitVersionReady returns a RequeueNeededAfter indicating the
 // dashboard version is not yet ready to be published.
-func requeueWaitVersionReady(r *resource) *ackrequeue.RequeueNeededAfter {
-	status := "unknown"
-	if r.ko.Status.VersionStatus != nil {
-		status = *r.ko.Status.VersionStatus
+func requeueWaitVersionReady(status string) *ackrequeue.RequeueNeededAfter {
+	if status == "" {
+		status = "unknown"
 	}
 	return ackrequeue.NeededAfter(
 		fmt.Errorf("dashboard version in '%s' state, waiting to publish", status),

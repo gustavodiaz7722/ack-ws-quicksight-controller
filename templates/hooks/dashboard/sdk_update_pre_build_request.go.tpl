@@ -1,25 +1,39 @@
-	// A VersionNumber diff means UpdateDashboard created a new draft version.
-	// We must publish it before updating Status.VersionNumber on the desired
-	// resource. If we set VersionNumber before a successful publish, a
-	// subsequent reconcile would see no diff and skip the publish, leaving
-	// the dashboard stuck on the old published version.
-	if delta.DifferentAt("Status.VersionNumber") {
-		ready, versionStatus := dashboardVersionReady(ctx, rm.sdkapi, rm.metrics, desired, desired.ko.Status.VersionNumber)
+	// UpdateDashboard creates a new version rather than mutating the published
+	// one, so promote a version already pending before starting another update,
+	// or a second unpublished version is stacked on the first. See
+	// shouldPublishPending for why only versions ACK created are promoted.
+	pendingVersion := desired.ko.Status.PendingPublishVersionNumber
+	if shouldPublishPending(pendingVersion, latest.ko.Status.VersionNumber) {
+		ready, versionStatus := dashboardVersionReady(
+			ctx, rm.sdkapi, rm.metrics, desired, pendingVersion,
+		)
 		if !ready {
-			return desired, requeueWaitVersionReady(desired)
+			return desired, requeueWaitVersionReady(versionStatus)
 		}
 		_, pubErr := rm.sdkapi.UpdateDashboardPublishedVersion(ctx, &svcsdk.UpdateDashboardPublishedVersionInput{
 			AwsAccountId:  desired.ko.Spec.AWSAccountID,
 			DashboardId:   desired.ko.Spec.ID,
-			VersionNumber: desired.ko.Status.VersionNumber,
+			VersionNumber: pendingVersion,
 		})
 		rm.metrics.RecordAPICall("UPDATE", "UpdateDashboardPublishedVersion", pubErr)
 		if pubErr != nil {
-			return desired, pubErr
+			// Synced=False is what schedules the retry: the runtime requeues an
+			// out-of-sync resource after requeue.DefaultRequeueAfterDuration.
+			// Returning the error instead reports Unknown and falls to a backoff
+			// that grows past 16 minutes.
+			msg := fmt.Sprintf(
+				"could not publish dashboard version %d: %s",
+				*pendingVersion, pubErr,
+			)
+			ackcondition.SetSynced(desired, corev1.ConditionFalse, &msg, nil)
+			return desired, nil
 		}
-		// VersionNumber is already correct on desired. Set VersionStatus
-		// from the DescribeDashboard result for the desired version.
+		// Publishing resolves the spec drift, so stop and let the next reconcile
+		// re-read the dashboard.
+		desired.ko.Status.VersionNumber = pendingVersion
 		desired.ko.Status.VersionStatus = &versionStatus
+		desired.ko.Status.PendingPublishVersionNumber = nil
+		return desired, nil
 	}
 	if delta.DifferentAt("Spec.Tags") {
 		arn := string(*latest.ko.Status.ACKResourceMetadata.ARN)
@@ -57,7 +71,7 @@
 			return desired, err
 		}
 	}
-	if !delta.DifferentExcept("Spec.Tags", "Spec.Permissions", "Spec.LinkSharingConfiguration", "Spec.LinkEntities", "Status.VersionNumber") {
+	if !delta.DifferentExcept("Spec.Tags", "Spec.Permissions", "Spec.LinkSharingConfiguration", "Spec.LinkEntities") {
 		return desired, nil
 	}
 

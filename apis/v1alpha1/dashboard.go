@@ -143,6 +143,8 @@ type DashboardStatus struct {
 	// The last time that this dashboard was updated.
 	// +kubebuilder:validation:Optional
 	LastUpdatedTime *metav1.Time `json:"lastUpdatedTime,omitempty"`
+	// +kubebuilder:validation:Optional
+	PendingPublishVersionNumber *int64 `json:"pendingPublishVersionNumber,omitempty"`
 	// The ARN of the dashboard, including the version number of the first version
 	// that is created.
 	// +kubebuilder:validation:Optional
